@@ -29,6 +29,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="runserver.py" />
+    <Compile Include="ToughnessDatabase\forms.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="ToughnessDatabase\__init__.py" />
     <Compile Include="ToughnessDatabase\views.py" />
   </ItemGroup>
@@ -39,6 +42,7 @@
     <Folder Include="ToughnessDatabase\static\fonts\" />
     <Folder Include="ToughnessDatabase\static\scripts\" />
     <Folder Include="ToughnessDatabase\templates\" />
+    <Folder Include="ToughnessDatabase\templates\forms\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="requirements.txt" />
@@ -64,8 +68,12 @@
     <Content Include="ToughnessDatabase\static\scripts\respond.js" />
     <Content Include="ToughnessDatabase\static\scripts\respond.min.js" />
     <Content Include="ToughnessDatabase\static\scripts\_references.js" />
+    <Content Include="ToughnessDatabase\templates\addtodb.html" />
     <Content Include="ToughnessDatabase\templates\about.html" />
     <Content Include="ToughnessDatabase\templates\contact.html" />
+    <Content Include="ToughnessDatabase\templates\forms\default.html" />
+    <Content Include="ToughnessDatabase\templates\forms\pipelineinfo.html" />
+    <Content Include="ToughnessDatabase\templates\forms\projectdetails.html" />
     <Content Include="ToughnessDatabase\templates\index.html" />
     <Content Include="ToughnessDatabase\templates\layout.html" />
   </ItemGroup>

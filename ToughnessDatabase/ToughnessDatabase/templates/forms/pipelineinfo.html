@@ -1,0 +1,29 @@
+{% extends "addtodb.html" %}
+
+{% block formcontent %}
+
+<div class="form-row">
+    <div class="form-group col-md-7">
+        {{ form.pipe_name.label }}
+        {{ form.pipe_name(class="form-control", id="pipe_name", placeholder="XX inch YYY km Launcher to Reciever Product") }}
+    </div>
+    <div class="form-group col-md-5">
+        {{ form.line_name.label }}
+        {{ form.line_name(class="form-control", id="line_name", placeholder="24ABDXYZ") }}
+    </div>
+</div>
+
+<div class="form-row">
+    <div class="form-group col-md-6">
+
+        
+    </div>
+    
+</div>
+
+<div class="form-group d-flex mt-4">
+    <a class="btn btn-secondary" href="{{ url_for("add_to_db", page_name="projectdetails.html") }}" role="button">Previous</a>
+    <a class="btn btn-primary" href="{{ url_for("add_to_db", page_name="") }}" role="button">Next</a>
+</div>
+
+{% endblock %}

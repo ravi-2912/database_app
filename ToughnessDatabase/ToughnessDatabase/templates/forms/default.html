@@ -1,0 +1,11 @@
+{% extends "addtodb.html" %}
+
+{% block formcontent %}
+
+<div class="form-group d-flex mt-4">
+    <a class="btn btn-primary btn-lg" href="{{ url_for("add_to_db", page_name="projectdetails.html") }}" role="button">Start</a>
+    <a class="btn btn-secondary btn-lg ml-5" href="{{ url_for("home") }}" role="button">Home</a>
+    
+</div>
+
+{% endblock %}
