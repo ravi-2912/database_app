@@ -1,0 +1,17 @@
+iteritems
+Symbols
+find_symbols
+VAR_LOAD_ALIAS
+__builtins__
+__file__
+FrameSymbolVisitor
+NodeVisitor
+RootVisitor
+symbols_for_node
+VAR_LOAD_PARAMETER
+VAR_LOAD_UNDEFINED
+__name__
+VAR_LOAD_RESOLVE
+__package__
+__cached__
+__spec__

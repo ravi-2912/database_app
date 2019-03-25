@@ -1,0 +1,16 @@
+unicode_literals
+timedelta
+os
+CSRF
+__builtins__
+__file__
+__package__
+datetime
+__all__
+sha1
+__name__
+hmac
+ValidationError
+SessionCSRF
+__cached__
+__spec__

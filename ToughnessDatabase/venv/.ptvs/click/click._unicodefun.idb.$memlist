@@ -1,0 +1,14 @@
+PY2
+_verify_python3_env
+_find_unicode_literals_frame
+os
+__spec__
+__file__
+__name__
+codecs
+_check_for_unicode_literals
+click
+__builtins__
+__cached__
+sys
+__package__

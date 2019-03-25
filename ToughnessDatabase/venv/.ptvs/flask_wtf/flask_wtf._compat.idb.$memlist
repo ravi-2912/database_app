@@ -1,0 +1,15 @@
+PY2
+urlparse
+to_bytes
+text_type
+__spec__
+__file__
+to_unicode
+warnings
+__name__
+FlaskWTFDeprecationWarning
+string_types
+__builtins__
+__cached__
+sys
+__package__

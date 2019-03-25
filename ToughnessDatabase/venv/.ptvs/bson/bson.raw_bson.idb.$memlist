@@ -1,0 +1,15 @@
+DEFAULT_RAW_BSON_OPTIONS
+DEFAULT
+abc
+__spec__
+__file__
+__package__
+__name__
+_iterate_elements
+InvalidBSON
+RawBSONDocument
+__builtins__
+__cached__
+_RAW_BSON_DOCUMENT_MARKER
+iteritems
+_UNPACK_INT

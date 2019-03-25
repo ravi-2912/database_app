@@ -1,0 +1,12 @@
+pop_context
+resolve_color_default
+get_current_context
+__spec__
+__file__
+__package__
+local
+_local
+__builtins__
+__cached__
+push_context
+__name__

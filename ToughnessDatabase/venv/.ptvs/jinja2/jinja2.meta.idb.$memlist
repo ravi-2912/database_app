@@ -1,0 +1,13 @@
+find_undeclared_variables
+string_types
+__spec__
+__file__
+find_referenced_templates
+nodes
+__name__
+CodeGenerator
+TrackingCodeGenerator
+__builtins__
+__cached__
+iteritems
+__package__

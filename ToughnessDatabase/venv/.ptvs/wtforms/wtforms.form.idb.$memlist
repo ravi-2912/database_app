@@ -1,0 +1,16 @@
+DefaultMeta
+iteritems
+__builtins__
+OrderedDict
+__file__
+itertools
+__cached__
+FormMeta
+__all__
+Form
+with_metaclass
+__name__
+BaseForm
+itervalues
+__package__
+__spec__

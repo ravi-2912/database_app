@@ -1,0 +1,9 @@
+dialect
+PGDialect_psycopg2
+__spec__
+__file__
+__name__
+PGDialect_psycopg2cffi
+__builtins__
+__cached__
+__package__

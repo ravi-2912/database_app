@@ -1,0 +1,13 @@
+patch
+__spec__
+absolute_import
+__file__
+py33
+call
+__name__
+MagicMock
+ANY
+Mock
+__builtins__
+__cached__
+__package__

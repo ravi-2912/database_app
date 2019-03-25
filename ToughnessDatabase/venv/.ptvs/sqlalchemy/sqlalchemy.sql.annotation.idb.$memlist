@@ -1,0 +1,15 @@
+_deep_deannotate
+_shallow_annotate
+operators
+util
+__spec__
+__file__
+_prepare_annotations
+_deep_annotate
+__name__
+Annotated
+annotated_classes
+__builtins__
+__cached__
+_new_annotation_type
+__package__

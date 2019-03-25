@@ -1,0 +1,17 @@
+Local
+PY2
+update_wrapper
+copy
+__name__
+__builtins__
+implements_bool
+__file__
+__cached__
+release_local
+ClosingIterator
+LocalProxy
+get_ident
+LocalManager
+LocalStack
+__package__
+__spec__

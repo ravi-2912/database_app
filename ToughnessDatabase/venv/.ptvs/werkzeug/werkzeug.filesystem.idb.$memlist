@@ -1,0 +1,14 @@
+get_filesystem_encoding
+__spec__
+__file__
+has_likely_buggy_unicode_filesystem
+warnings
+__name__
+codecs
+_is_ascii_encoding
+BrokenFilesystemWarning
+__builtins__
+__cached__
+_warned_about_filesystem_encoding
+sys
+__package__
