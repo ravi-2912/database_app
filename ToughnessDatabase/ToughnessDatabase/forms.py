@@ -25,11 +25,16 @@ class ProjectForm(FlaskForm):
     reset = SubmitField('Reset')
 
 
-class ParamForm(Form):
-    def __init__(self, parameter_text="none", units=["a","b"], *args, **kwargs):
-        super(FlaskForm, self).__init__(parameter_text, units, *args, **kwargs)
-        self.param = DecimalField(parameter_text)
-        self.unit = RadioField('Units', choices=[(units[0], units[0]), (units[1], units[1])])
+class ParamForm(FlaskForm):
+    param = DecimalField("Param")
+    units = RadioField("Units")
+    def __init__(self, text="none", units=["a","b"], **kwargs):
+        super(FlaskForm, self).__init__(**kwargs)
+        self.param.label = text
+        self.units.label = "{} Units".format(text)
+        self.units.choices = [(units[0], units[0]), (units[1], units[1])]
+        self.units.default = units[1]
+        self.process()
             
 
 class PipelineForm(FlaskForm):
@@ -37,17 +42,8 @@ class PipelineForm(FlaskForm):
     pipe_name = StringField('Pipeline Name', validators=[DataRequired()])
     line_name = StringField('Line Name', validators=[DataRequired()])
     
-    od = FieldList(FormField(ParamForm), 'outer diameter', min_entries=2)
+    od = FieldList(FormField(lambda **kwargs: ParamForm(text="Outer Diameter", units=["mm", "inch"], **kwargs)), min_entries=2)
        
-
-    wt = DecimalField('Wall Thickness')
-    wt_unit = RadioField('Units', choices=[('mm','mm'),('in','in')])
-    
-    dp = DecimalField('Design Pressure')
-    dp_unit = RadioField('Units', choices=[('bar','bar'),('psi','psi')])
-    
-    mop = DecimalField('Maximum Operating Pressures')
-    mop_unit = RadioField('Units', choices=[('bar','bar'),('psi','psi')])
 
     next = SubmitField('Next')
     prev = SubmitField('Previous')
