@@ -40,3 +40,25 @@ input[type="checkbox"].input-validation-error {
 .validation-summary-valid {
     display: none;
 }
+
+.fa-plus-circle {
+    font-size: 110%;
+    color: #28a745;
+}
+
+.fa-minus-circle {
+    font-size: 110%;
+    color: #dc3545;
+}
+
+.animate-plus {
+    transition: all 0.4s ease-in-out;
+}
+
+.rotate-plus {
+    transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    -o-transform: rotate(45deg);
+    -moz-transform: rotate(45deg);
+}
