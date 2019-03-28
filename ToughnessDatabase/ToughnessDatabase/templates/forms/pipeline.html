@@ -1,0 +1,77 @@
+{% extends "add.html" %}
+
+{% block formcontent %}
+<form action="/add/pipeline" method="POST">
+    <div class="form-group">
+        {{ form.name.label }}
+        {{ form.name(class="form-control", id="pipe_name", placeholder="XX inch YYY km Launcher to Reciever Product") }}
+    </div>
+
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            {{ form.short_name.label }}
+            {{ form.short_name(class="form-control", id="line_name", placeholder="24ABDXYZ") }}
+        </div>
+        <div class="form-group col-md-6">
+            {{ form.length.label }}
+            {{ form.length(class="form-control", id="line_name", placeholder="24ABDXYZ") }}
+        </div>
+    </div>
+
+</form>
+
+
+
+
+<div class="form-row mt-3 border-bottom">
+    <label>Outer Diameter</label>
+    <div class="btn-group-toggle" data-toggle="buttons">
+        <label class="btn btn-outline border-0 active pt-0 text-success">
+            <input id="expand-od-form" type="checkbox" autocomplete="off">
+            <i class="fas fa-plus animate-plus"></i>
+        </label>
+    </div>
+    
+</div>
+
+<div class="form-row mt-3">
+    <label class="my-0">Select Units</label>
+    <div class="form-check form-check-inline ml-2 pr-2 pb-1">
+        {% for subfield in form.diameter_units %}
+            {{ subfield(class="form-check-input ml-2", type="radio", id="od-units", autocomplete="off") }}
+            {{ subfield.label(class="form-check-label pb-1") }}
+        {% endfor %}
+    </div>
+</div>
+
+<div class="form-row mt-3">
+    {% for od in form.diameter %}
+        {{ od() }}
+    {% endfor%}
+</div>
+
+
+<div class="form-group d-flex mt-4">
+    <a class="btn btn-secondary" href="{{ url_for('add_project') }}" role="button">Previous</a>
+    <a class="btn btn-primary" href="{{ url_for('add') }}" role="button">Next</a>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+    console.log($('#expand-od-form')[0].checked)
+    $('#expand-od-form').change(function (e) {
+        e.preventDefault();
+        $(this).parent().toggleClass('text-success text-danger');
+        $('.animate-plus').toggleClass('rotate-plus');
+        console.log($(this).innerHtml)
+        if (this.checked) {
+            console.log('yes');
+
+        } else {
+            console.log('bon');
+        }
+    });
+</script>
+{% endblock %}
