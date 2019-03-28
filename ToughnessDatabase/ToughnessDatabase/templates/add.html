@@ -7,8 +7,8 @@
     </div>
 </div>-->
 
-<aside class="row mt-5">
-    <div class="col-md-3 sidenav">
+<div class="row mt-5">
+    <aside class="col-md-3 sidenav">
         {% set navlist = ["Project Details", "Pipeline Information", "Tensile Test Data", "Charyy Test Data",
                           "Toughness Test Data", "Materiak Composition", "Stress Strain Curve",
                           "Submit for Checking", "Commit to Database"] 
@@ -20,8 +20,8 @@
                 </a>
             {% endfor %}
         </div>
-    </div>
-    <div class="col-md-9">
+    </aside>
+    <section class="col-md-9">
         <div class="row mb-3">
             <div class="col">
                 <h3>{{ form.title }}</h3>
@@ -29,15 +29,16 @@
         </div>
         <div class="row">
             <div class="col">
-                <form>
-                    {% block formcontent %} 
-                    
-                    {% endblock %}
-                </form>
+                {% block formcontent %} 
+                    <div class="form-group d-flex mt-4">
+                        <a class="btn btn-primary btn-lg" href="{{ url_for('add_project') }}" role="button">Start</a>
+                        <a class="btn btn-secondary btn-lg ml-5" href="{{ url_for('home') }}" role="button">Home</a>
+                    </div>
+                {% endblock %}
             </div>
         </div>
-    </div>
-</aside>
+    </section>
+</div>
 
 
 {% endblock %}
