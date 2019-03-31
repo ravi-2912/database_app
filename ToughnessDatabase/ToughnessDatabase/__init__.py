@@ -3,9 +3,10 @@ The flask application package.
 """
 
 from flask import Flask
-from flask_wtf.csrf import CsrfProtect
+from flask_wtf.csrf import CSRFProtect
 
-csrf = CsrfProtect()
+csrf = CSRFProtect()
+
 app = Flask(__name__)
 csrf.init_app(app)
 
