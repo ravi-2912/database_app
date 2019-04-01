@@ -1,0 +1,173 @@
+{% extends "add.html" %}
+
+{% from "forms/_form_macros.html" import render_accord_form_item %}
+
+
+
+{% block formcontent %}
+
+<form action="/add/pipeline/{{line_name}}" method="POST">
+    {{form.csrf_token}}
+    <div class="accordion" id="accordion-pipeline-info">
+        <div class="card">
+            <div class="card-header" id="dimensions">
+                <h2 class="mb-0">
+                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse-dimensions">
+                        Dimensions
+                    </button>
+                </h2>
+            </div>
+
+            <div id="collapse-dimensions" class="collapse show" data-parent="#accordion-pipeline-info">
+                <div class="card-body">
+                    {{ render_accord_form_item(form.diameter, form.diameter_units, item_name="Outer Diameter") }}
+                    {{ render_accord_form_item(form.thickness, form.thickness_units, item_name="Wal Thickness") }}
+                    {{ render_accord_form_item(form.length, form.length_units, False, "Pipeline\'s Length", col_md=6) }}
+                </div>
+            </div>
+        </div>
+
+
+        <div class="card">
+            <div class="card-header" id="construction">
+                <h2 class="mb-0">
+                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapse-construction">
+                        Construction
+                    </button>
+                </h2>
+            </div>
+            <div id="collapse-construction" class="collapse" data-parent="#accordion-pipeline-info">
+                <div class="card-body">
+                        {{ render_accord_form_item(form.grade, item_name="Material Grade") }}
+                        {{ render_accord_form_item(form.seam_weld_type, item_name="Seam Weld Type") }}
+                        {{ render_accord_form_item(form.psl_no, item_name="PSL Number") }}
+                        {{ render_accord_form_item(form.manufacturer, item_name="Manufacturer Name") }}
+                        {{ render_accord_form_item(form.year_constructed, item_name="Year Constructed") }}
+                </div>
+            </div>
+        </div>
+
+
+        <div class="card">
+            <div class="card-header" id="design">
+                <h2 class="mb-0">
+                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapse-design">
+                        Design
+                    </button>
+                </h2>
+            </div>
+            <div id="collapse-design" class="collapse" data-parent="#accordion-pipeline-info">
+                <div class="card-body">
+                    {{ render_accord_form_item(form.design_code, item_name="Design Code") }}
+                    {{ render_accord_form_item(form.design_press, form.design_press_units, item_name="Design Pressure") }}
+                    {{ render_accord_form_item(form.design_temp, form.design_temp_units, item_name="Design Temperature") }}
+                    <div class="form-row">
+                        <div class="col-md-6">
+                            {{ render_accord_form_item(form.design_life, item_name="Design Life", add_rem_btn=False, col_md=12) }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ render_accord_form_item(form.year_commissioned, item_name="Year Commissioned", add_rem_btn=False, col_md=12) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="card">
+            <div class="card-header" id="operation">
+                <h2 class="mb-0">
+                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapse-operation">
+                        Operation
+                    </button>
+                </h2>
+            </div>
+            <div id="collapse-operation" class="collapse" data-parent="#accordion-pipeline-info">
+                <div class="card-body">                    
+                    {{ render_accord_form_item(form.oper_press, form.oper_press_units, item_name="Operating Pressure") }}
+                    {{ render_accord_form_item(form.oper_temp, form.oper_temp_units, item_name="Operating Temperature") }}
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header" id="hydrotest">
+                <h2 class="mb-0">
+                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapse-hydrotest">
+                        Hydrotesat
+                    </button>
+                </h2>
+            </div>
+            <div id="collapse-hydrotest" class="collapse" data-parent="#accordion-pipeline-info">
+                <div class="card-body">                    
+                    {{ render_accord_form_item(form.test_press, form.test_press_units, item_name="Hydrotest Pressure") }}
+                    {{ render_accord_form_item(form.test_year, item_name="Year Hydrotested", col_md=6, add_rem_btn=False) }}
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="form-group d-flex mt-4">
+        <button id="reset-btn" class="btn btn-warning mr-auto" type="reset">Reset</button>
+        {{ form.go_back(typ="button", class=" btn btn-secondary mr-2") }}
+        {{ form.go_next(typ="button", class=" btn btn-primary") }}
+    </div>
+</form>
+
+{% if form.errors %}
+{{ form.errors }}
+{% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+
+<script type="text/javascript">
+
+function assignEventToFieldBtn(name) {
+    $(`#add-${name}-btn`).click(function (e) {
+        e.preventDefault();
+        let elems = $(`[id^=${name}-]`)
+        let last_elem = elems.last();
+        let elem_count = elems.length;
+        let new_elem_id = `${name}-${elem_count}`
+        let new_elem = last_elem.parent().clone();
+        new_elem.children().attr('id', new_elem_id);
+        new_elem.children().attr('name', new_elem_id);
+        if (last_elem.is('select')) {
+            let opt_count = last_elem.children().length - 1;
+            if ((elem_count + 1) > opt_count ) {
+                return;
+            }
+        }
+        new_elem.insertAfter(last_elem.parent())
+    });
+
+    $(`#rem-${name}-btn`).click(function (e) {
+        e.preventDefault();
+        let elems = $(`[id^=${name}-]`)
+        let last_elem = elems.last();
+        let elem_count = elems.length;
+        if (elem_count > 1) {
+            last_elem.parent().remove();
+        }
+    });
+
+}
+
+assignEventToFieldBtn('diameter');
+assignEventToFieldBtn('thickness');
+assignEventToFieldBtn('grade');
+assignEventToFieldBtn('seam_weld_type');
+assignEventToFieldBtn('psl_no');
+assignEventToFieldBtn('manufacturer');
+assignEventToFieldBtn('design_code');
+assignEventToFieldBtn('design_press');
+assignEventToFieldBtn('design_temp');
+assignEventToFieldBtn('oper_press');
+assignEventToFieldBtn('oper_temp');
+assignEventToFieldBtn('test_press');
+    
+</script>
+{% endblock %}

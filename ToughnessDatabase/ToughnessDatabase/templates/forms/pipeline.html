@@ -1,76 +1,66 @@
 {% extends "add.html" %}
 
 {% block formcontent %}
+
 <form action="/add/pipeline" method="POST">
-    <div class="form-group">
-        {{ form.name.label }}
-        {{ form.name(class="form-control", id="pipe_name", placeholder="XX inch YYY km Launcher to Reciever Product") }}
-    </div>
-
-    <div class="form-row">
-        <div class="form-group col-md-6">
-            {{ form.short_name.label }}
-            {{ form.short_name(class="form-control", id="line_name", placeholder="24ABDXYZ") }}
-        </div>
-        <div class="form-group col-md-6">
-            {{ form.length.label }}
-            {{ form.length(class="form-control", id="line_name", placeholder="24ABDXYZ") }}
-        </div>
-    </div>
-
-</form>
-
-
-
-
-<div class="form-row mt-3 border-bottom">
-    <label>Outer Diameter</label>
-    <div class="btn-group-toggle" data-toggle="buttons">
-        <label class="btn btn-outline border-0 active pt-0 text-success">
-            <input id="expand-od-form" type="checkbox" autocomplete="off">
-            <i class="fas fa-plus animate-plus"></i>
-        </label>
-    </div>
     
-</div>
+    {% for pipeline in pipelines %}
+    <div class="form-group">
+        <label>
+            {{ pipeline.short_name }} 
+            {% if pipeline.name %}
+                - {{ pipeline.name }}
+            {% endif %}
+        </label>
+        <div>
+            <a role="button" class="btn btn-info" href="{{ url_for('add_pipeline_info', line_name=pipeline.short_name) }}">
+                Add Info
+            </a>
+        </div>
+    </div>    
+    {% endfor %}
 
-<div class="form-row mt-3">
-    <label class="my-0">Select Units</label>
-    <div class="form-check form-check-inline ml-2 pr-2 pb-1">
-        {% for subfield in form.diameter_units %}
-            {{ subfield(class="form-check-input ml-2", type="radio", id="od-units", autocomplete="off") }}
-            {{ subfield.label(class="form-check-label pb-1") }}
-        {% endfor %}
+    <div class="form-group d-flex mt-5">
+        <a role="button" class="btn btn-secondary mr-2" href="/add/project">Back</a>
+        <a role="button" class="btn btn-primary" href="{{ url_for('add_pipeline_info', line_name=pipelines[0].short_name) }}">Next</a>
     </div>
-</div>
-
-<div class="form-row mt-3">
-    {% for od in form.diameter %}
-        {{ od() }}
-    {% endfor%}
-</div>
-
-
-<div class="form-group d-flex mt-4">
-    <a class="btn btn-secondary" href="{{ url_for('add_project') }}" role="button">Previous</a>
-    <a class="btn btn-primary" href="{{ url_for('add') }}" role="button">Next</a>
-</div>
+</form>
 
 {% endblock %}
 
 {% block scripts %}
+
 <script type="text/javascript">
-    console.log($('#expand-od-form')[0].checked)
     $('#expand-od-form').change(function (e) {
         e.preventDefault();
         $(this).parent().toggleClass('text-success text-danger');
         $('.animate-plus').toggleClass('rotate-plus');
-        console.log($(this).innerHtml)
+        $('#od-form').toggleClass('d-none')
         if (this.checked) {
-            console.log('yes');
 
         } else {
-            console.log('bon');
+
+        }
+    });
+
+    $('#add-dia-text').click(function (e) {
+        e.preventDefault();
+        let prev_elem = $('#od-texts').children('div:nth-last-child(2)').children();
+        let prev_elem_id = prev_elem.attr('id');
+        let next_elem_id = prev_elem_id.split('-')[0] + '-' + (parseInt(prev_elem_id.split('-')[1]) + 1)
+            .toString();
+        html = `<div class="form-group col-md-2">
+                    <input class="form-control" id="${next_elem_id}" name="${next_elem_id}" type="text" value="">
+                </div>`;
+        prev_elem.parent().after(html);
+    });
+    $('#rem-dia-text').click(function (e) {
+        e.preventDefault();
+        let last_elem = $('#od-texts').children('div:nth-last-child(2)');
+        let elem_count = $('#od-texts').children().length - 1;
+        console.log(elem_count)
+        if (elem_count > 1) {
+            last_elem.remove();
         }
     });
 </script>

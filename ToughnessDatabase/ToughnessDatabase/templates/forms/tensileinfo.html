@@ -1,0 +1,114 @@
+{% extends "add.html" %}
+{% from "forms/_form_macros.html" import render_accord_form_item %}
+
+{% block formcontent %}
+
+<form action="/add/pipeline/{{line_name}}" method="POST">
+    {{form.csrf_token}}
+
+    <div class="accordion" id="accordion-tensile-test-data">
+        <div class="card">
+            <div class="card-header" id="strength">
+                <h2 class="mb-0">
+                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse-strength">
+                        Strength Test
+                    </button>
+                </h2>
+            </div>
+
+            <div id="collapse-strength" class="collapse show" data-parent="#accordion-tensile-test-data">
+                <div class="card-body">
+                    {{ render_accord_form_item(form.test_code, item_name="Testing Standard") }}
+                    {{ render_accord_form_item(form.yields, form.yield_units, item_name="Test Yield") }}
+                    {{ render_accord_form_item(form.tensile, form.tensile_units, item_name="Test Tensile") }}
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header" id="elastic">
+                <h2 class="mb-0">
+                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapse-elastic">
+                        Elastic
+                    </button>
+                </h2>
+            </div>
+            <div id="collapse-elastic" class="collapse" data-parent="#accordion-tensile-test-data">
+                <div class="card-body">
+                        {{ render_accord_form_item(form.modulus, form.modulus_units, item_name="Elastic Modulus") }}
+                        {{ render_accord_form_item(form.poisson, item_name="Poisson\'s Ratio") }}
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header" id="thermal">
+                <h2 class="mb-0">
+                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapse-thermal">
+                        Thermal
+                    </button>
+                </h2>
+            </div>
+            <div id="collapse-thermal" class="collapse" data-parent="#accordion-tensile-test-data">
+                <div class="card-body">
+                        {{ render_accord_form_item(form.therm_coeff, form.therm_coeff_units, item_name="Thermal Expansion") }}
+                </div>
+            </div>
+        </div>
+
+
+        
+
+    </div>
+
+    <div class="form-group d-flex mt-4">
+        <button id="reset-btn" class="btn btn-warning mr-auto" type="reset">Reset</button>
+        {{ form.go_back(typ="button", class=" btn btn-secondary mr-2") }}
+        {{ form.go_next(typ="button", class=" btn btn-primary") }}
+    </div>
+</form>
+
+{% if form.errors %}
+{{ form.errors }}
+{% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+
+<script type="text/javascript">
+
+function assignEventToFieldBtn(name) {
+    $(`#add-${name}-btn`).click(function (e) {
+        e.preventDefault();
+        let elems = $(`[id^=${name}-]`)
+        let last_elem = elems.last();
+        let elem_count = elems.length;
+        let new_elem_id = `${name}-${elem_count}`
+        let new_elem = last_elem.parent().clone();
+        new_elem.children().attr('id', new_elem_id);
+        new_elem.children().attr('name', new_elem_id);
+        if (last_elem.is('select')) {
+            let opt_count = last_elem.children().length - 1;
+            if ((elem_count + 1) > opt_count ) {
+                return;
+            }
+        }
+        new_elem.insertAfter(last_elem.parent())
+    });
+
+    $(`#rem-${name}-btn`).click(function (e) {
+        e.preventDefault();
+        let elems = $(`[id^=${name}-]`)
+        let last_elem = elems.last();
+        let elem_count = elems.length;
+        if (elem_count > 1) {
+            last_elem.parent().remove();
+        }
+    });
+
+}
+
+    
+</script>
+{% endblock %}

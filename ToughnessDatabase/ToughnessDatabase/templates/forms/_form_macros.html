@@ -1,0 +1,58 @@
+{% macro render_radio(field) -%}
+    <div class="form-check form-check-inline">
+        {{ field(class="form-check-input") }}
+        {{ field.label(class="form-check-label") }}
+    </div>
+{%- endmacro %}
+
+{% macro render_form_item(item, col_md=6, use_col=True, placeholder="") -%}
+    <div class="form-group {% if use_col %}col-md-{{ col_md }}{% endif %}">
+        {{ item.label }}
+        {{ item(class="form-control", placeholder=placeholder) }}
+    </div>
+{%- endmacro %}
+
+
+{% macro render_accord_form_item(input_field, radio_field="", add_rem_btn=True, item_name="", col_md=2) -%}
+<div class="form-group mb-0">
+    <label class="mr-3">
+        {% if item_name %}
+            {{ item_name }}
+        {% else %}
+            {{ input_field.label.text }}
+        {% endif %}
+    </label>
+    {% if radio_field %}
+        <div class="d-inline" id="radio-{{ radio_field.id }}">
+            {% for field in radio_field %}
+                {{ render_radio(field) }}
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+<div class="form-row mb-3" id="{{ input_field.id }}">
+    {% if input_field.type == "FieldList" %}
+        {% set inputs = input_field %}
+    {% else %}
+        {% set inputs = [input_field] %}
+    {% endif %}
+    {% for item in inputs %}
+        <div class="col-md-{{col_md}}">
+            {% if item.type == "SelectField" %}
+                {{ item(class="custom-select") }}
+            {% else %}
+                {{ item(class="form-control") }}
+            {% endif %}
+        </div>
+    {% endfor %}
+    {% if add_rem_btn %}
+    <div class=" btn-group ml-2">
+        <button id="rem-{{ input_field.id }}-btn" class="btn btn-danger" type="button"><i class="fas fa-minus"></i></button>
+        <button id="add-{{ input_field.id }}-btn" class="btn btn-success" type="button"><i class="fas fa-plus"></i></button>
+    </div>
+    {% endif %}
+</div>
+{%- endmacro %}
+
+
+
