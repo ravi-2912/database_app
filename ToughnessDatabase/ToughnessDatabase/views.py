@@ -110,6 +110,10 @@ def add_pipeline():
     """Renders the available pipelines."""
 
     form = {"title": "Pipelines"}
+    print(len(session["project"]["pipelines"]))
+    if len(session["project"]["pipelines"]) == 1:
+        return redirect(url_for("add_pipeline_info", line_name=session["project"]["pipelines"][0]["short_name"]))
+
     return render_template(
         "forms/pipeline.html",
         title = "Add Pipeline Information",
@@ -146,7 +150,7 @@ def add_pipeline_info(line_name):
                 "seam_weld_type": [swt for swt in form.seam_weld_type.data],
                 "psl_no": [psl for psl in form.psl_no.data],
                 "manufacturer": [man for man in form.manufacturer.data],
-                "year_constructed": [yc for yc in form.year_constructed.data],
+                "year_constructed": [str(yc) for yc in form.year_constructed.data],
                 
                 "design_code": [dc for dc in form.design_code.data],
                 "design_press": [str(dp) for dp in form.design_press.data],
@@ -166,9 +170,25 @@ def add_pipeline_info(line_name):
                 "test_year": str(form.test_year.data)
             }
         }
+
+        line = session["pipelines"][line_name]
+        D = line["diameter"]
+        T = line["thickness"]
+        G = line["grade"]
+        W = line["seam_weld_type"]
+        M = line["manufacturer"]
+        Y = line["year_constructed"]
+        du = line["diameter_units"]
+        tu = line["thickness_units"]
+
+        spools = [f"{d} {du} {t} {tu}, {g} {w}, {m}, {y}".format(du=du,tu=tu) for d,t,g,w,m,y in itertools.product(D,T,G,W,M,Y)]
+        session["pipelines"][line_name]["spools"] = spools
         
         if (form.go_back.data):
-            return (redirect(url_for("add_pipeline")))
+            if len(session["project"]["pipelines"]) == 1:
+                return redirect(url_for("add_project"))
+            else:
+                return (redirect(url_for("add_pipeline")))
         
         #if form.go_next.data and len(session["pipelines"]) == len(session["project"]["pipelines"]):
             #return redirect(url_for('add'))
