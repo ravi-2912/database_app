@@ -16,8 +16,8 @@ class PipelineNameListForm(FlaskForm):
     class Meta:
         csrf = False
     
-    short_name = StringField("Line Short Name", validators=[DataRequired()])
-    name = StringField("Name")
+    short_name = StringField("Line Name", validators=[DataRequired()])
+    name = StringField("Pipeline Full Name")
 
 
 class ProjectForm(FlaskForm):
@@ -67,40 +67,66 @@ class PipelineForm(FlaskForm):
     test_press_units = RadioField("Test Pressure Units", choices=[("bar", "bar"), ("psi", "psi")], validators=[Optional()])
     test_year = DecimalField("Test Year", validators=[Optional()])
     
-    go_back = SubmitField("Back")
-    go_next = SubmitField("Next")
+    go_cancel = SubmitField("Cancel")
+    go_done = SubmitField("Done")
+
+class TensileForm(FlaskForm):
+    class Meta:
+        csrf = False
+
+    yields = DecimalField("Yield Strength", validators=[Optional()])
+    tensile = DecimalField("Tensile Strength", validators=[Optional()])
+
+class ElasticForm(FlaskForm):
+    class Meta:
+        csrf = False
+
+    modulus = DecimalField("Elastic Modulus", validators=[Optional()])
+    poisson = DecimalField("Poission\'s Ratio", validators=[Optional()])
 
 class TensileTestForm(FlaskForm):
     title = "Tensile Test Data"
-    test_spool = SelectField("Tensile Test Spool", validators=[Optional()])
-    test_code = FieldList(StringField("Testing Standard"), min_entries=1)
-    yields = FieldList(DecimalField("Test Yield Strength"), min_entries=1, validators=[Optional()])
-    yield_units = RadioField("Pressure Units", choices=[("MPa", "MPa"), ("ksi", "ksi")], validators=[Optional()])
-    tensile = FieldList(DecimalField("Test Tensile Strength"), min_entries=1, validators=[Optional()])
-    tensile_units = RadioField("Pressure Units", choices=[("MPa", "MPa"), ("ksi", "ksi")], validators=[Optional()])
     
-    modulus = FieldList(DecimalField("Elastic Modulus"), min_entries=1, validators=[Optional()])
+    test_code = FieldList(StringField("Testing Standard"), min_entries=1)
+
+    tensile_data = FieldList(FormField(TensileForm), min_entries=1)
+    elastic_data = FieldList(FormField(ElasticForm), min_entries=1)
+    
+    yield_units = RadioField("Pressure Units", choices=[("MPa", "MPa"), ("ksi", "ksi")], validators=[Optional()])
+    tensile_units = RadioField("Pressure Units", choices=[("MPa", "MPa"), ("ksi", "ksi")], validators=[Optional()])
     modulus_units = RadioField("Elastic Modulus Units", choices=[("MPa", "MPa"), ("ksi", "ksi")], validators=[Optional()])
-    poisson = FieldList(DecimalField("Poission\'s Ratio"), min_entries=1, validators=[Optional()])
+    
     therm_coeff = FieldList(DecimalField("Coefficient of Thermal Expansion"), min_entries=1, validators=[Optional()])
     therm_coeff_units = RadioField("Test Pressure Units", choices=[("umc", "μm/m °C"), ("uif", "μin/in °F")], validators=[Optional()])
     # TODO: stress-strain curve
-    go_back = SubmitField("Back")
-    go_next = SubmitField("Next")
+    
 
-class CharpyForm(FlaskForm):
+class CharpyDataForm(FlaskForm):
     class Meta:
         csrf = False
-    size = SelectField("Specimen Size", choices=[("full","Full"), ("half", "Half")], validators=[DataRequired()])
     charpy = DecimalField("Charpy Energy", validators=[DataRequired()])
-    location = SelectField("Test Location", choices=[("WM", "WM"), ("HAZ", "HAZ"), ("BM", "BM"), ("FL", "FL"), ("FL2", "FL+2mm"), ("FL5", "FL+5mm")], validators=[DataRequired()])
     shear_area = DecimalField("Shear Area (%)", validators=[Optional()])
     temperature = DecimalField("Test Temperature", validators=[Optional()])
     
 class CharpyTestForm(FlaskForm):
-    title = "Charpy Test Data"
-    test_code = FieldList(StringField("Testing Standard"), min_entries=1)
-    chapry_data = FieldList(FormField(CharpyForm), min_entries=1)
+    class Meta:
+        csrf = False
+    size = SelectField("Specimen Size", choices=[("full","Full"), ("half", "Half")], validators=[DataRequired()])
+    location = SelectField("Test Location", choices=[("WM", "WM"), ("HAZ", "HAZ"), ("BM", "BM"), ("FL", "FL"), ("FL2", "FL+2mm"), ("FL5", "FL+5mm")], validators=[DataRequired()])
+    charpy_data = FieldList(FormField(CharpyDataForm), min_entries=1)
     charpy_units = RadioField("Charpy Energy Units", choices=[("J", "J"), ("ftlbs", "ft-lbs")], validators=[DataRequired()])
     temp_units = RadioField("Temperature Units", choices=[("C", "°C"), ("F", "°F")], validators=[Optional()])
+    
+class MultiCharpyTestsForm(FlaskForm):
+    class Meta:
+        csrf = False
+    title = "Charpy Test Data"
+    test_code = FieldList(StringField("Testing Standard"), min_entries=1)
+    charpy_tests = FieldList(FormField(CharpyTestForm), min_entries=1)
+    
+class TestDataForm(FlaskForm):
+    title = "Test Data"
+    tensile_tests = FormField(TensileTestForm)
 
+    go_cancel = SubmitField("Back")
+    go_done = SubmitField("Next")
