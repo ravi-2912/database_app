@@ -12,17 +12,6 @@ from functools import wraps
 import itertools
 global str
 
-def project_required(f):
-    @wraps(f)
-    def wrap(*args, **kwargs):
-        if "project" in session:
-            return f(*args, **kwargs)
-        else:
-            # flash("You need to login first")
-            return "Project and pipeline details are required"
-
-    return wrap
-
 @app.route("/")
 @app.route("/home")
 def home():
@@ -95,7 +84,10 @@ def add_project():
             "pipelines": [data for data in form.pipelines.data]            
         }
         session["pipelines"] = {}    
-        return redirect(url_for("add_pipeline"))
+        if len(session["project"]["pipelines"]) == 1:
+            return redirect(url_for("add_pipeline_info", line_name=session["project"]["pipelines"][0]["short_name"]))
+        else:
+            return redirect(url_for("pipelines"))
 
     return render_template(
         "forms/project.html",
@@ -105,14 +97,12 @@ def add_project():
         form = form
         )
 
-@app.route("/add/pipeline")
-def add_pipeline():
+@app.route("/pipelines")
+def pipelines():
     """Renders the available pipelines."""
 
     form = {"title": "Pipelines"}
-    print(len(session["project"]["pipelines"]))
-    if len(session["project"]["pipelines"]) == 1:
-        return redirect(url_for("add_pipeline_info", line_name=session["project"]["pipelines"][0]["short_name"]))
+       
 
     return render_template(
         "forms/pipeline.html",
@@ -139,6 +129,7 @@ def add_pipeline_info(line_name):
     if request.method == "POST" and form.validate_on_submit():
         session["pipelines"] = {
             line_name: {
+                "short_name": line_name,
                 "diameter": [str(dia) for dia in form.diameter.data],
                 "diameter_units": form.diameter_units.data,
                 "thickness": [str(wt) for wt in form.thickness.data],
@@ -184,12 +175,21 @@ def add_pipeline_info(line_name):
         spools = [f"{d} {du} {t} {tu}, {g} {w}, {m}, {y}".format(du=du,tu=tu) for d,t,g,w,m,y in itertools.product(D,T,G,W,M,Y)]
         session["pipelines"][line_name]["spools"] = spools
         
-        if (form.go_back.data):
+        if (form.go_cancel.data):
+            session["pipelines"][line_name] = {}
             if len(session["project"]["pipelines"]) == 1:
                 return redirect(url_for("add_project"))
             else:
-                return (redirect(url_for("add_pipeline")))
+                return (redirect(url_for("pipelines")))
         
+        if (form.go_done.data):
+            if len(session["pipelines"]) == 1:
+                if len(session["pipelines"][line_name]["spools"]) == 1:
+                    return redirect(url_for(""))#tensile
+                else:
+                    return redirect(url_for("spools")) #spools
+            else:
+                return (redirect(url_for("pipelines")))
         #if form.go_next.data and len(session["pipelines"]) == len(session["project"]["pipelines"]):
             #return redirect(url_for('add'))
         #    print("doing")
@@ -208,28 +208,46 @@ def add_pipeline_info(line_name):
         )
 
 
-@app.route("/add/tensile-test/<string:line_name>", methods=["GET", "POST"])
-# @project_required
-def add_tensile_test(line_name):
+@app.route("/spools", methods=["GET", "POST"])
+def spools():
+
+    form = {"title": "Pipeline Spools"}
+       
+    return render_template(
+        "forms/spools.html",
+        title = "Add Spool Test Data",
+        year = datetime.now().year,
+        username = environ["USERNAME"],
+        pipelines = session["pipelines"],
+        form = form
+        )
+
+
+
+@app.route("/add/<string:line_name>/<string:spool>/test-data", methods=["GET", "POST"])
+def add_test_data(line_name, spool):
     """Renders the add test database page layout."""
 
+    """
     try:
         prj = session["tensile_tests"][line_name]
         form = forms.TensileTestForm(request.form, data=prj)
     except:
         form = forms.TensileTestForm(request.form)
+    """
     
-    form.title += " - {}".format(line_name)
+    form = forms.TestDataForm(request.form)
 
     if request.method == "POST" and form.validate_on_submit():
         print("POST")
         
         
     return render_template(
-        "forms/tensileinfo.html",
-        title = "Tensile Test Data",
+        "forms/testdata.html",
+        title = "Add Test Data",
         year = datetime.now().year,
         username = environ["USERNAME"],
-        line_name=line_name,
+        line_name = line_name,
+        spool = spool,
         form = form
         )
