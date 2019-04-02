@@ -14,14 +14,11 @@
 
 
 {% macro render_accord_form_item(input_field, radio_field="", add_rem_btn=True, item_name="", col_md=2) -%}
-<div class="form-group mb-0">
-    <label class="mr-3">
-        {% if item_name %}
-            {{ item_name }}
-        {% else %}
-            {{ input_field.label.text }}
-        {% endif %}
-    </label>
+<div class="form-group">
+    <div class="mr-3 d-inline">
+        {{ input_field.label }}
+        
+    </div>
     {% if radio_field %}
         <div class="d-inline" id="radio-{{ radio_field.id }}">
             {% for field in radio_field %}
@@ -29,8 +26,8 @@
             {% endfor %}
         </div>
     {% endif %}
-</div>
-<div class="form-row mb-3" id="{{ input_field.id }}">
+
+<div class="form-row mb-4" id="{{ input_field.id }}">
     {% if input_field.type == "FieldList" %}
         {% set inputs = input_field %}
     {% else %}
@@ -52,7 +49,33 @@
     </div>
     {% endif %}
 </div>
+</div>
 {%- endmacro %}
 
 
+{% macro render_form_item_cols(fieldlist, col_md=[6,6]) -%}
+<div class="form-row">
+    {% for subfield in fieldlist[0] %}
+    <div class="col-md-{{ col_md[loop.index-1] }}">
+        {{ subfield.label}}
+    </div>
+    {% endfor %}
+</div>
+{% for item in fieldlist %}
+<div class="form-row mb-4" id="{{ fieldlist.id }}-{{ loop.index-1 }}">
+    {% for subfield in item %}
+    <div class="col-md-{{ col_md[loop.index-1] }}">
+        {{ subfield(class="form-control") }}
+    </div>
+    {% endfor %}
+    <div class=" btn-group ml-1">
+        <button id="rem-{{ fieldlist.id }}-row" class="btn btn-danger" type="button"><i class="fas fa-minus"></i></button>
+        <button id="add-{{ fieldlist.id }}-row" class="btn btn-success" type="button"><i class="fas fa-plus"></i></button>
+    </div>
+</div>
+    
+{% endfor %}
 
+    
+
+{%- endmacro %}
