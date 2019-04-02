@@ -3,23 +3,20 @@
 {% block formcontent %}
 
 <form action="/add/spools" method="POST">
-    
-    {% for spool in spools %}
-    <div class="form-group">
-        <label>{{ spool.name }}</label>
-        <div>
-            <a role="button" class="btn btn-secondary" href="{{ url_for('add_pipeline_info', line_name=pipeline.short_name) }}">
-                Tensile Test
+    {% for pipeline in pipelines.keys() %}
+
+        <h4><label>{{ pipeline }}</label></h4>
+        {% for spool in pipelines[pipeline]["spools"] %}
+            <a class="btn btn-secondary" href="{{ url_for('add_test_data', line_name=pipeline, spool=spool) }}">
+                {{ spool }}
             </a>
-            <a role="button" class="btn btn-secondary" href="{{ url_for('add_pipeline_info', line_name=pipeline.short_name) }}">
-                Charpy Test
-            </a>
-            <a role="button" class="btn btn-secondary" href="{{ url_for('add_pipeline_info', line_name=pipeline.short_name) }}">
-                Fracture Test
-            </a>
-        </div>
-    </div>    
+
+        {% endfor %}
+
     {% endfor %}
+
+
+
 
     <div class="form-group d-flex mt-4">
         <button id="reset-btn" class="btn btn-warning mr-auto" type="reset">Reset</button>

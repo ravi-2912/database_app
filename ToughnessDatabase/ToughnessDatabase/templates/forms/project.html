@@ -1,6 +1,6 @@
 {% extends "add.html" %}
 {% from "forms/_form_macros.html" import render_form_item, render_accord_form_item %}
-{% from "forms/_form_macros.html" import render_accord_form_items_in_row %}
+{% from "forms/_form_macros.html" import render_form_item_cols %}
 
 {% block formcontent %}
 <form action="/add/project" method="POST">
@@ -32,30 +32,7 @@
             </div>
             <div id="collapse-pipeline-names" class="collapse show" data-parent="#accordion-pipeline-list">
                 <div class="card-body">
-                    <div class="form-row">
-                        <label class="col-md-3">
-                            Pipeline Short Name
-                        </label>
-                        <label class="col-md-9">
-                            Pipeline Full Name
-                        </label>
-                    </div>
-                    {% for pipeline in form.pipelines %}
-                        <div class="form-row mt-2" id="{{pipeline.label.text.lower()}}">
-                            <div class="col-md-3">
-                                {{ pipeline["short_name"](class="form-control") }}
-                            </div>
-                            <div class="col-md-9">
-                                {{ pipeline["name"](class="form-control")}}
-                            </div>
-                        </div>
-                    {% endfor %}
-                    <div class="form-group mt-2">
-                        <div class=" btn-group">
-                            <button id="rem-pipeline-row" class="btn btn-danger" type="button"><i class="fas fa-minus"></i></button>
-                            <button id="add-pipeline-row" class="btn btn-success" type="button"><i class="fas fa-plus"></i></button>
-                        </div>
-                    </div>
+                    {{ render_form_item_cols(form.pipelines, col_md=[2,7]) }}
                 </div>
             </div>
         </div>
