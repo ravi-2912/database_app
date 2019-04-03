@@ -33,21 +33,30 @@ class ProjectForm(FlaskForm):
     pipelines = FieldList(FormField(PipelineNameListForm), min_entries=1)
     go_next = SubmitField("Next")
 
+    
+class LinePipeForm(FlaskForm):
+    class Meta:
+        csrf = False
 
+    diameter = DecimalField("Diameter", validators=[DataRequired()])
+    thickness = DecimalField("Thickness", validators=[DataRequired()])
+    grade = SelectField("Grade", choices=[("",""), ("Gr.B", "B"), ("X42", "X42"), ("X52", "X52")], validators=[DataRequired()])
+    seam_weld_type = SelectField("Weld Type", choices=[("",""), ("DSAW", "DSAW"), ("EFW", "EFW"), ("ERW", "ERW"), ("SMLS", "SMLS")], validators=[DataRequired()])
+    psl_no = SelectField("PSL No.", choices=[("",""), ("PSL1", "PSL 1"), ("PSL2", "PSL 2")], validators=[DataRequired()])
+    manufacturer = StringField("Manufacturer", validators=[Optional()])
+        
 class PipelineForm(FlaskForm):
     title = "Pipeline Information"
     
-    diameter = FieldList(DecimalField("Outer Diameter"), min_entries=1, validators=[Optional()])
+    line_pipes = FieldList(FormField(LinePipeForm), min_entries=1)
+
+
     diameter_units = RadioField("Diameter Units", choices=[("mm", "mm"), ("inch", "inch")], validators=[Optional()])
-    thickness = FieldList(DecimalField("Wall Thickness"), min_entries=1, validators=[Optional()])
     thickness_units = RadioField("Thickness Units", choices=[("mm", "mm"), ("inch", "inch")], validators=[Optional()])
     length = DecimalField("Pipeline Length", validators=[Optional()])
     length_units = RadioField("Length Units", choices=[("m", "m"), ("ft", "ft")], validators=[Optional()])
     
-    grade = FieldList(SelectField("Material Grade", choices=[("",""), ("b", "Grade B"), ("X42", "Grade X42"), ("X52", "Grade X52")]), min_entries=1)
-    seam_weld_type = FieldList(SelectField("Weld Type", choices=[("",""), ("DSAW", "DSAW"), ("EFW", "EFW"), ("ERW", "ERW"), ("SMLS", "SMLS")]), validators=[Optional()], min_entries=1)
-    psl_no = FieldList(SelectField("Product Specification Level (PSL)", choices=[("",""), ("PSL1", "PSL 1"), ("PSL2", "PSL 2")]), validators=[Optional()], max_entries=2, min_entries=1)
-    manufacturer = FieldList(StringField("ManufacturerName"), min_entries=1, validators=[Optional()])
+    
     year_constructed = FieldList(DecimalField("Construction Year"), validators=[Optional()], min_entries=1)
     
     design_code = FieldList(StringField("Design Code"), min_entries=1)
@@ -76,13 +85,11 @@ class TensileForm(FlaskForm):
 
     yields = DecimalField("Yield Strength", validators=[Optional()])
     tensile = DecimalField("Tensile Strength", validators=[Optional()])
-
-class ElasticForm(FlaskForm):
-    class Meta:
-        csrf = False
-
     modulus = DecimalField("Elastic Modulus", validators=[Optional()])
     poisson = DecimalField("Poission\'s Ratio", validators=[Optional()])
+    therm_coeff = DecimalField("Coefficient of Thermal Expansion", validators=[Optional()])
+
+  
 
 class TensileTestForm(FlaskForm):
     title = "Tensile Test Data"
@@ -90,13 +97,10 @@ class TensileTestForm(FlaskForm):
     test_code = FieldList(StringField("Testing Standard"), min_entries=1)
 
     tensile_data = FieldList(FormField(TensileForm), min_entries=1)
-    elastic_data = FieldList(FormField(ElasticForm), min_entries=1)
     
     yield_units = RadioField("Pressure Units", choices=[("MPa", "MPa"), ("ksi", "ksi")], validators=[Optional()])
     tensile_units = RadioField("Pressure Units", choices=[("MPa", "MPa"), ("ksi", "ksi")], validators=[Optional()])
     modulus_units = RadioField("Elastic Modulus Units", choices=[("MPa", "MPa"), ("ksi", "ksi")], validators=[Optional()])
-    
-    therm_coeff = FieldList(DecimalField("Coefficient of Thermal Expansion"), min_entries=1, validators=[Optional()])
     therm_coeff_units = RadioField("Test Pressure Units", choices=[("umc", "μm/m °C"), ("uif", "μin/in °F")], validators=[Optional()])
     # TODO: stress-strain curve
     
@@ -104,29 +108,27 @@ class TensileTestForm(FlaskForm):
 class CharpyDataForm(FlaskForm):
     class Meta:
         csrf = False
+    
+    size = SelectField("Specimen Size", choices=[("full","Full"), ("half", "Half")], validators=[DataRequired()])
+    location = SelectField("Test Location", choices=[("WM", "WM"), ("HAZ", "HAZ"), ("BM", "BM"), ("FL", "FL"), ("FL2", "FL+2mm"), ("FL5", "FL+5mm")], validators=[DataRequired()])
     charpy = DecimalField("Charpy Energy", validators=[DataRequired()])
     shear_area = DecimalField("Shear Area (%)", validators=[Optional()])
     temperature = DecimalField("Test Temperature", validators=[Optional()])
-    
-class CharpyTestForm(FlaskForm):
-    class Meta:
-        csrf = False
-    size = SelectField("Specimen Size", choices=[("full","Full"), ("half", "Half")], validators=[DataRequired()])
-    location = SelectField("Test Location", choices=[("WM", "WM"), ("HAZ", "HAZ"), ("BM", "BM"), ("FL", "FL"), ("FL2", "FL+2mm"), ("FL5", "FL+5mm")], validators=[DataRequired()])
-    charpy_data = FieldList(FormField(CharpyDataForm), min_entries=1)
-    charpy_units = RadioField("Charpy Energy Units", choices=[("J", "J"), ("ftlbs", "ft-lbs")], validators=[DataRequired()])
-    temp_units = RadioField("Temperature Units", choices=[("C", "°C"), ("F", "°F")], validators=[Optional()])
+
     
 class MultiCharpyTestsForm(FlaskForm):
     class Meta:
         csrf = False
     title = "Charpy Test Data"
     test_code = FieldList(StringField("Testing Standard"), min_entries=1)
-    charpy_tests = FieldList(FormField(CharpyTestForm), min_entries=1)
+    charpy_tests = FieldList(FormField(CharpyDataForm), min_entries=1)
+    charpy_units = RadioField("Charpy Energy Units", choices=[("J", "J"), ("ftlbs", "ft-lbs")], validators=[DataRequired()])
+    temp_units = RadioField("Temperature Units", choices=[("C", "°C"), ("F", "°F")], validators=[Optional()])
     
 class TestDataForm(FlaskForm):
     title = "Test Data"
     tensile_tests = FormField(TensileTestForm)
+    charpy_test_data = FormField(MultiCharpyTestsForm)
 
-    go_cancel = SubmitField("Back")
-    go_done = SubmitField("Next")
+    go_cancel = SubmitField("Cancel")
+    go_done = SubmitField("Done")
