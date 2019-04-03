@@ -83,7 +83,7 @@ def add_project():
             "city": form.city.data,
             "pipelines": [data for data in form.pipelines.data]            
         }
-        session["pipelines"] = {}    
+
         if len(session["project"]["pipelines"]) == 1:
             return redirect(url_for("add_pipeline_info", line_name=session["project"]["pipelines"][0]["short_name"]))
         else:
@@ -118,6 +118,7 @@ def pipelines():
 def add_pipeline_info(line_name):
     """Renders the add test database page layout."""
 
+    """
     try:
         prj = session["pipelines"][line_name]
         form = forms.PipelineForm(request.form, data=prj)
@@ -125,7 +126,9 @@ def add_pipeline_info(line_name):
         form = forms.PipelineForm(request.form)
     
     form.title += " - {}".format(line_name)
-
+    """
+    form = forms.PipelineForm(request.form)
+    
     if request.method == "POST" and form.validate_on_submit():
         session["pipelines"] = {
             line_name: {
@@ -172,7 +175,7 @@ def add_pipeline_info(line_name):
         du = line["diameter_units"]
         tu = line["thickness_units"]
 
-        spools = [f"{d} {du} {t} {tu}, {g} {w}, {m}, {y}".format(du=du,tu=tu) for d,t,g,w,m,y in itertools.product(D,T,G,W,M,Y)]
+        spools = ["{} {} {} {} {} {} {} {}".format(d,du,t,tu,g,w,m,"" if y==None else y) for d,t,g,w,m,y in itertools.product(D,T,G,W,M,Y)]
         session["pipelines"][line_name]["spools"] = spools
         
         if (form.go_cancel.data):
@@ -190,14 +193,7 @@ def add_pipeline_info(line_name):
                     return redirect(url_for("spools")) #spools
             else:
                 return (redirect(url_for("pipelines")))
-        #if form.go_next.data and len(session["pipelines"]) == len(session["project"]["pipelines"]):
-            #return redirect(url_for('add'))
-        #    print("doing")
-        #else:
-            # TODO: code this up
-        #    print("redirecting")
-            ##return redirect(url_for('add_pipeline_info', ))
-        
+
     return render_template(
         "forms/pipelineinfo.html",
         title = "Pipeline Data",
