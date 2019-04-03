@@ -1,6 +1,6 @@
 {% extends "add.html" %}
 
-{% from "forms/_form_macros.html" import render_accord_form_item %}
+{% from "forms/_form_macros.html" import render_radio, render_accord_form_item, render_form_item_cols, render_inline_radio %}
 
 
 
@@ -13,36 +13,19 @@
             <div class="card-header" id="dimensions">
                 <h2 class="mb-0">
                     <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse-dimensions">
-                        Dimensions
+                        Line Pipe
                     </button>
                 </h2>
             </div>
 
             <div id="collapse-dimensions" class="collapse show" data-parent="#accordion-pipeline-info">
                 <div class="card-body">
-                    {{ render_accord_form_item(form.diameter, form.diameter_units) }}
-                    {{ render_accord_form_item(form.thickness, form.thickness_units) }}
-                    {{ render_accord_form_item(form.length, form.length_units, False, col_md=6) }}
-                </div>
-            </div>
-        </div>
-
-
-        <div class="card">
-            <div class="card-header" id="construction">
-                <h2 class="mb-0">
-                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapse-construction">
-                        Construction
-                    </button>
-                </h2>
-            </div>
-            <div id="collapse-construction" class="collapse" data-parent="#accordion-pipeline-info">
-                <div class="card-body">
-                        {{ render_accord_form_item(form.grade, item_name="Material Grade") }}
-                        {{ render_accord_form_item(form.seam_weld_type, item_name="Seam Weld Type") }}
-                        {{ render_accord_form_item(form.psl_no, item_name="PSL Number") }}
-                        {{ render_accord_form_item(form.manufacturer, item_name="Manufacturer Name") }}
-                        {{ render_accord_form_item(form.year_constructed, item_name="Year Constructed") }}
+                    <div class="mb-3">
+                        {{ render_inline_radio(form.diameter_units) }}
+                        {{ render_inline_radio(form.thickness_units) }}
+                    </div>
+                    {{ render_form_item_cols(form.line_pipes, col_md=[2]*6) }}
+                    {{ render_accord_form_item(form.year_constructed, item_name="Year Constructed") }}
                 </div>
             </div>
         </div>

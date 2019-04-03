@@ -27,28 +27,28 @@
         </div>
     {% endif %}
 
-<div class="form-row mb-4" id="{{ input_field.id }}">
-    {% if input_field.type == "FieldList" %}
-        {% set inputs = input_field %}
-    {% else %}
-        {% set inputs = [input_field] %}
-    {% endif %}
-    {% for item in inputs %}
-        <div class="col-md-{{col_md}}">
-            {% if item.type == "SelectField" %}
-                {{ item(class="custom-select") }}
-            {% else %}
-                {{ item(class="form-control") }}
-            {% endif %}
+    <div class="form-row mb-4" id="{{ input_field.id }}">
+        {% if input_field.type == "FieldList" %}
+            {% set inputs = input_field %}
+        {% else %}
+            {% set inputs = [input_field] %}
+        {% endif %}
+        {% for item in inputs %}
+            <div class="col-md-{{col_md}}">
+                {% if item.type == "SelectField" %}
+                    {{ item(class="custom-select") }}
+                {% else %}
+                    {{ item(class="form-control") }}
+                {% endif %}
+            </div>
+        {% endfor %}
+        {% if add_rem_btn %}
+        <div class=" btn-group ml-2">
+            <button id="rem-{{ input_field.id }}-btn" class="btn btn-danger" type="button"><i class="fas fa-minus"></i></button>
+            <button id="add-{{ input_field.id }}-btn" class="btn btn-success" type="button"><i class="fas fa-plus"></i></button>
         </div>
-    {% endfor %}
-    {% if add_rem_btn %}
-    <div class=" btn-group ml-2">
-        <button id="rem-{{ input_field.id }}-btn" class="btn btn-danger" type="button"><i class="fas fa-minus"></i></button>
-        <button id="add-{{ input_field.id }}-btn" class="btn btn-success" type="button"><i class="fas fa-plus"></i></button>
+        {% endif %}
     </div>
-    {% endif %}
-</div>
 </div>
 {%- endmacro %}
 
@@ -68,7 +68,8 @@
         {{ subfield(class="form-control") }}
     </div>
     {% endfor %}
-    <div class=" btn-group ml-1">
+    {% set col_sum = col_md | sum() %}
+    <div class=" btn-group ml-1 {% if col_sum ==12 %} mt-2 {% endif %}">
         <button id="rem-{{ fieldlist.id }}-row" class="btn btn-danger" type="button"><i class="fas fa-minus"></i></button>
         <button id="add-{{ fieldlist.id }}-row" class="btn btn-success" type="button"><i class="fas fa-plus"></i></button>
     </div>
@@ -76,6 +77,18 @@
     
 {% endfor %}
 
-    
+{%- endmacro %}
 
+
+{% macro render_inline_radio(field) -%}
+<div class="mr-3 d-inline">
+        {{ field.label }}
+        
+    <div class="d-inline ml-3" id="radio-{{ field.id }}">
+        {% for subfield in field %}
+            {{ render_radio(subfield) }}
+        {% endfor %}
+    </div>
+
+</div>
 {%- endmacro %}
