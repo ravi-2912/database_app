@@ -62,19 +62,19 @@
     {% endfor %}
 </div>
 {% for item in fieldlist %}
-<div class="form-row mb-4" id="{{ fieldlist.id }}-{{ loop.index-1 }}">
+<div class="form-row mb-4 d-flex" id="{{ fieldlist.id }}-{{ loop.index-1 }}">
     {% for subfield in item %}
     <div class="col-md-{{ col_md[loop.index-1] }}">
         {{ subfield(class="form-control") }}
     </div>
     {% endfor %}
     {% set col_sum = col_md | sum() %}
-    <div class=" btn-group ml-1 {% if col_sum ==12 %} mt-2 {% endif %}">
-        <button id="rem-{{ fieldlist.id }}-row" class="btn btn-danger" type="button"><i class="fas fa-minus"></i></button>
-        <button id="add-{{ fieldlist.id }}-row" class="btn btn-success" type="button"><i class="fas fa-plus"></i></button>
-    </div>
-</div>
     
+</div>
+<div class=" btn-group ml-1 {% if col_sum ==12 %} mt-2 {% endif %}">
+    <button id="rem-{{ fieldlist.id }}-btn" class="btn btn-danger" type="button"><i class="fas fa-minus"></i></button>
+    <button id="add-{{ fieldlist.id }}-btn" class="btn btn-success" type="button"><i class="fas fa-plus"></i></button>
+</div>
 {% endfor %}
 
 {%- endmacro %}

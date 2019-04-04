@@ -106,51 +106,10 @@
 
 {% block scripts %}
 
+<script src="{{ url_for('static', filename='js/localscript.js') }}"></script>
 <script type="text/javascript">
 
-function assignEventToFieldBtn(name) {
-    $(`#add-${name}-btn`).click(function (e) {
-        e.preventDefault();
-        let elems = $(`[id^=${name}-]`)
-        let last_elem = elems.last();
-        let elem_count = elems.length;
-        let new_elem_id = `${name}-${elem_count}`
-        let new_elem = last_elem.parent().clone();
-        new_elem.children().attr('id', new_elem_id);
-        new_elem.children().attr('name', new_elem_id);
-        if (last_elem.is('select')) {
-            let opt_count = last_elem.children().length - 1;
-            if ((elem_count + 1) > opt_count ) {
-                return;
-            }
-        }
-        new_elem.insertAfter(last_elem.parent())
-    });
-
-    $(`#rem-${name}-btn`).click(function (e) {
-        e.preventDefault();
-        let elems = $(`[id^=${name}-]`)
-        let last_elem = elems.last();
-        let elem_count = elems.length;
-        if (elem_count > 1) {
-            last_elem.parent().remove();
-        }
-    });
-
-}
-
-assignEventToFieldBtn('diameter');
-assignEventToFieldBtn('thickness');
-assignEventToFieldBtn('grade');
-assignEventToFieldBtn('seam_weld_type');
-assignEventToFieldBtn('psl_no');
-assignEventToFieldBtn('manufacturer');
-assignEventToFieldBtn('design_code');
-assignEventToFieldBtn('design_press');
-assignEventToFieldBtn('design_temp');
-assignEventToFieldBtn('oper_press');
-assignEventToFieldBtn('oper_temp');
-assignEventToFieldBtn('test_press');
+addEventToFieldBtnMulti('line_pipes');
     
 </script>
 {% endblock %}

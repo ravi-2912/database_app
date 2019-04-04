@@ -30,7 +30,7 @@ class ProjectForm(FlaskForm):
     country = StringField("Country")
     state = StringField("State")
     city = StringField("City")
-    pipelines = FieldList(FormField(PipelineNameListForm), min_entries=1)
+    pipelines = FieldList(FormField(PipelineNameListForm), min_entries=2)
     go_next = SubmitField("Next")
 
     
@@ -38,8 +38,8 @@ class LinePipeForm(FlaskForm):
     class Meta:
         csrf = False
 
-    diameter = DecimalField("Diameter", validators=[DataRequired()])
-    thickness = DecimalField("Thickness", validators=[DataRequired()])
+    diameter = StringField("Diameter", validators=[DataRequired()])
+    thickness = StringField("Thickness", validators=[DataRequired()])
     grade = SelectField("Grade", choices=[("",""), ("Gr.B", "B"), ("X42", "X42"), ("X52", "X52")], validators=[DataRequired()])
     seam_weld_type = SelectField("Weld Type", choices=[("",""), ("DSAW", "DSAW"), ("EFW", "EFW"), ("ERW", "ERW"), ("SMLS", "SMLS")], validators=[DataRequired()])
     psl_no = SelectField("PSL No.", choices=[("",""), ("PSL1", "PSL 1"), ("PSL2", "PSL 2")], validators=[DataRequired()])
@@ -48,7 +48,7 @@ class LinePipeForm(FlaskForm):
 class PipelineForm(FlaskForm):
     title = "Pipeline Information"
     
-    line_pipes = FieldList(FormField(LinePipeForm), min_entries=1)
+    line_pipes = FieldList(FormField(LinePipeForm), min_entries=2)
 
 
     diameter_units = RadioField("Diameter Units", choices=[("mm", "mm"), ("inch", "inch")], validators=[Optional()])

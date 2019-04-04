@@ -10,6 +10,7 @@ from ToughnessDatabase import app, forms
 from os import environ
 from functools import wraps
 import itertools
+
 global str
 
 @app.route("/")
@@ -114,6 +115,7 @@ def pipelines():
         )
 
 
+
 @app.route("/add/pipeline/<string:line_name>", methods=["GET", "POST"])
 def add_pipeline_info(line_name):
     """Renders the add test database page layout."""
@@ -133,17 +135,14 @@ def add_pipeline_info(line_name):
         session["pipelines"] = {
             line_name: {
                 "short_name": line_name,
-                "diameter": [str(dia) for dia in form.diameter.data],
+                "line_pipes": [lp for lp in form.line_pipes.data],
+                
                 "diameter_units": form.diameter_units.data,
-                "thickness": [str(wt) for wt in form.thickness.data],
+                
                 "thickness_units": form.thickness_units.data,
                 "length": str(form.length.data),
                 "length_units": form.length_units.data,
                 
-                "grade": [gr for gr in form.grade.data],
-                "seam_weld_type": [swt for swt in form.seam_weld_type.data],
-                "psl_no": [psl for psl in form.psl_no.data],
-                "manufacturer": [man for man in form.manufacturer.data],
                 "year_constructed": [str(yc) for yc in form.year_constructed.data],
                 
                 "design_code": [dc for dc in form.design_code.data],
@@ -165,18 +164,21 @@ def add_pipeline_info(line_name):
             }
         }
 
-        line = session["pipelines"][line_name]
-        D = line["diameter"]
-        T = line["thickness"]
-        G = line["grade"]
-        W = line["seam_weld_type"]
-        M = line["manufacturer"]
-        Y = line["year_constructed"]
-        du = line["diameter_units"]
-        tu = line["thickness_units"]
+        session["pipelines"][line_name]["spools"] = []
+        for lp in session["pipelines"][line_name]["line_pipes"]:
+            session["pipelines"][line_name]["spools"].append(
+                "{d} {du} {t} {tu} {w} {g} {m}".format(
+                    d=str(lp["diameter"]),
+                    du=session["pipelines"][line_name]["diameter_units"],
+                    t=str(lp["thickness"]),
+                    tu=session["pipelines"][line_name]["thickness_units"],
+                    w=lp["seam_weld_type"],
+                    g=lp["grade"],
+                    m=lp["manufacturer"],
+                ))
 
-        spools = ["{} {} {} {} {} {} {} {}".format(d,du,t,tu,g,w,m,"" if y==None else y) for d,t,g,w,m,y in itertools.product(D,T,G,W,M,Y)]
-        session["pipelines"][line_name]["spools"] = spools
+        #spools = ["{} {} {} {} {} {} {} {}".format(d,du,t,tu,g,w,m,"" if y==None else y) for d,t,g,w,m,y in itertools.product(D,T,G,W,M,Y)]
+        #session["pipelines"][line_name]["spools"] = spools
         
         if (form.go_cancel.data):
             session["pipelines"][line_name] = {}
@@ -188,7 +190,7 @@ def add_pipeline_info(line_name):
         if (form.go_done.data):
             if len(session["pipelines"]) == 1:
                 if len(session["pipelines"][line_name]["spools"]) == 1:
-                    return redirect(url_for(""))#tensile
+                    return redirect(url_for("add_test_data", line_name=line_name, spool=session["pipelines"][line_name]["spools"]))
                 else:
                     return redirect(url_for("spools")) #spools
             else:
