@@ -17,7 +17,6 @@
 <div class="form-group">
     <div class="mr-3 d-inline">
         {{ input_field.label }}
-        
     </div>
     {% if radio_field %}
         <div class="d-inline" id="radio-{{ radio_field.id }}">
@@ -62,7 +61,7 @@
     {% endfor %}
 </div>
 {% for item in fieldlist %}
-<div class="form-row mb-4 d-flex" id="{{ fieldlist.id }}-{{ loop.index-1 }}">
+<div class="form-row mb-2" id="{{ fieldlist.id}}-{{ loop.index-1 }}">
     {% for subfield in item %}
     <div class="col-md-{{ col_md[loop.index-1] }}">
         {{ subfield(class="form-control") }}
@@ -71,11 +70,12 @@
     {% set col_sum = col_md | sum() %}
     
 </div>
-<div class=" btn-group ml-1 {% if col_sum ==12 %} mt-2 {% endif %}">
+{% endfor %}
+<div class="btn-group">
     <button id="rem-{{ fieldlist.id }}-btn" class="btn btn-danger" type="button"><i class="fas fa-minus"></i></button>
     <button id="add-{{ fieldlist.id }}-btn" class="btn btn-success" type="button"><i class="fas fa-plus"></i></button>
 </div>
-{% endfor %}
+
 
 {%- endmacro %}
 

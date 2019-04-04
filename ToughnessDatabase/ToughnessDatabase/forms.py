@@ -30,7 +30,7 @@ class ProjectForm(FlaskForm):
     country = StringField("Country")
     state = StringField("State")
     city = StringField("City")
-    pipelines = FieldList(FormField(PipelineNameListForm), min_entries=2)
+    pipelines = FieldList(FormField(PipelineNameListForm), min_entries=1)
     go_next = SubmitField("Next")
 
     
@@ -60,19 +60,19 @@ class PipelineForm(FlaskForm):
     year_constructed = FieldList(DecimalField("Construction Year"), validators=[Optional()], min_entries=1)
     
     design_code = FieldList(StringField("Design Code"), min_entries=1)
-    design_press = FieldList(DecimalField("Design Pressure"), validators=[Optional()], min_entries=1)
+    design_press = FieldList(DecimalField("Design Pressure"), validators=[Optional()], min_entries=1, label="Design Pressure")
     design_press_units = RadioField("Pressure Units", choices=[("bar", "bar"), ("psi", "psi")], validators=[Optional()])
-    design_temp = FieldList(DecimalField("Design Temperatures"), validators=[Optional()], min_entries=1)
+    design_temp = FieldList(DecimalField("Design Temperatures"), validators=[Optional()], min_entries=1, label="Design Temperature")
     design_temp_units = RadioField("Temperature Units", choices=[("C", "°C"), ("F", "°F")], validators=[Optional()])
     design_life = DecimalField("Design Life in Years", validators=[Optional()])
     year_commissioned = DecimalField("Commissioning Year", validators=[Optional()])
 
-    oper_press = FieldList(DecimalField("Operating Pressure"), validators=[Optional()], min_entries=1)
+    oper_press = FieldList(DecimalField("Operating Pressure"), validators=[Optional()], min_entries=1, label="Operating Pressure")
     oper_press_units = RadioField("Pressure Units", choices=[("bar", "bar"), ("psi", "psi")], validators=[Optional()])
-    oper_temp = FieldList(DecimalField("Operating Temperatures"), validators=[Optional()], min_entries=1)
+    oper_temp = FieldList(DecimalField("Operating Temperatures"), validators=[Optional()], min_entries=1, label="Operating Temperature")
     oper_temp_units = RadioField("Temperature Units", choices=[("C", "°C"), ("F", "°F")], validators=[Optional()])
 
-    test_press = FieldList(DecimalField("Test Pressure"), validators=[Optional()], min_entries=1)
+    test_press = FieldList(DecimalField("Test Pressure"), validators=[Optional()], min_entries=1, label="Test Pressure")
     test_press_units = RadioField("Test Pressure Units", choices=[("bar", "bar"), ("psi", "psi")], validators=[Optional()])
     test_year = DecimalField("Test Year", validators=[Optional()])
     

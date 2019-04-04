@@ -1,4 +1,4 @@
-function assignEventToFieldBtn(name) {
+function addEventToFieldBtn(name) {
     $(`#add-${name}-btn`).click(function (e) {
         e.preventDefault();
         let elems = $(`[id^=${name}-]`)
@@ -32,26 +32,29 @@ function assignEventToFieldBtn(name) {
 function addEventToFieldBtnMulti(name) {
     $(`#add-${name}-btn`).click(function(e) {
         e.preventDefault();
-        let elems = $(`div[id^="${name}"]`).children()
-        console.log(elems)
+        let elems = $(`div.form-row[id^="${name}"]`)
         let prev_elem = elems.last();
-        let elem_count = elems.length
-        html = `<div class="form-row mt-2" id="pipelines-${elem_count}">
-                    <div class="col-md-3">
-                        <input class="form-control" id="pipelines-${elem_count}-short_name" name="pipelines-${elem_count}-short_name" required type="text" >
-                    </div>
-                    <div class="col-md-9">
-                        <input class="form-control" id="pipelines-${elem_count}-name" name="pipelines-${elem_count}-name" type="text">
-                    </div>
-                </div>`;
-        prev_elem.after(html);
+        let new_elem = prev_elem.clone();
+        let new_elem_children = new_elem.children();
+        let newId = text => text.replace(/(\d+)+/g, function(match, number) {
+            return parseInt(number)+1;
+        });
+        new_elem.attr('id', newId(new_elem.attr('id')));
+
+        new_elem_children.each((i, el)=>{
+            let child = $(el).children();
+            child.attr('id', newId(child.attr('id')));
+            child.attr('name', newId(child.attr('name')));
+        })
+        prev_elem.after(new_elem);
     });
+
     $(`#rem-${name}-btn`).click(function(e) {
         e.preventDefault();
-        let elems = $('div[id^="pipelines"]')
+        let elems = $(`div.form-row[id^="${name}"]`)
         let last_elem = elems.last();
         let elem_count = elems.length - 1;
-        if (elem_count > 1) {
+        if (elem_count > 0) {
             last_elem.remove();
         }
     });

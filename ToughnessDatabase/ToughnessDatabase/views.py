@@ -85,6 +85,7 @@ def add_project():
             "pipelines": [data for data in form.pipelines.data]            
         }
 
+        print(session["project"]["pipelines"])
         if len(session["project"]["pipelines"]) == 1:
             return redirect(url_for("add_pipeline_info", line_name=session["project"]["pipelines"][0]["short_name"]))
         else:

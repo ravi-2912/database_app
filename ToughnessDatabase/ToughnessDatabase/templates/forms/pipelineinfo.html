@@ -41,12 +41,12 @@
             </div>
             <div id="collapse-design" class="collapse" data-parent="#accordion-pipeline-info">
                 <div class="card-body">
-                    {{ render_accord_form_item(form.design_code, item_name="Design Code") }}
-                    {{ render_accord_form_item(form.design_press, form.design_press_units, item_name="Design Pressure") }}
-                    {{ render_accord_form_item(form.design_temp, form.design_temp_units, item_name="Design Temperature") }}
+                    {{ render_accord_form_item(form.design_code) }}
+                    {{ render_accord_form_item(form.design_press, form.design_press_units) }}
+                    {{ render_accord_form_item(form.design_temp, form.design_temp_units) }}
                     <div class="form-row">
                         <div class="col-md-6">
-                            {{ render_accord_form_item(form.design_life, item_name="Design Life", add_rem_btn=False, col_md=12) }}
+                            {{ render_accord_form_item(form.design_life, add_rem_btn=False, col_md=12) }}
                         </div>
                         <div class="col-md-6">
                             {{ render_accord_form_item(form.year_commissioned, item_name="Year Commissioned", add_rem_btn=False, col_md=12) }}
@@ -67,8 +67,8 @@
             </div>
             <div id="collapse-operation" class="collapse" data-parent="#accordion-pipeline-info">
                 <div class="card-body">                    
-                    {{ render_accord_form_item(form.oper_press, form.oper_press_units, item_name="Operating Pressure") }}
-                    {{ render_accord_form_item(form.oper_temp, form.oper_temp_units, item_name="Operating Temperature") }}
+                    {{ render_accord_form_item(form.oper_press, form.oper_press_units) }}
+                    {{ render_accord_form_item(form.oper_temp, form.oper_temp_units) }}
                 </div>
             </div>
         </div>
@@ -83,8 +83,8 @@
             </div>
             <div id="collapse-hydrotest" class="collapse" data-parent="#accordion-pipeline-info">
                 <div class="card-body">                    
-                    {{ render_accord_form_item(form.test_press, form.test_press_units, item_name="Hydrotest Pressure") }}
-                    {{ render_accord_form_item(form.test_year, item_name="Year Hydrotested", col_md=6, add_rem_btn=False) }}
+                    {{ render_accord_form_item(form.test_press, form.test_press_units) }}
+                    {{ render_accord_form_item(form.test_year) }}
                 </div>
             </div>
         </div>
@@ -106,10 +106,17 @@
 
 {% block scripts %}
 
-<script src="{{ url_for('static', filename='js/localscript.js') }}"></script>
+
 <script type="text/javascript">
 
+addEventToFieldBtn('year_constructed');
 addEventToFieldBtnMulti('line_pipes');
-    
+addEventToFieldBtn('design_code');
+addEventToFieldBtn('design_press');
+addEventToFieldBtn('design_temp');
+addEventToFieldBtn('oper_press');
+addEventToFieldBtn('oper_temp');
+addEventToFieldBtn('test_press');
+
 </script>
 {% endblock %}
