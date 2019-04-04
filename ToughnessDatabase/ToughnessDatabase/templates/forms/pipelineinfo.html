@@ -6,7 +6,7 @@
 
 {% block formcontent %}
 
-<form action="/add/pipeline/{{line_name}}" method="POST">
+<form action="/add/pipeline/{{line_name}}" method="POST" id="pipeline-form">
     {{form.csrf_token}}
     <div class="accordion" id="accordion-pipeline-info">
         <div class="card">
@@ -21,11 +21,15 @@
             <div id="collapse-dimensions" class="collapse show" data-parent="#accordion-pipeline-info">
                 <div class="card-body">
                     <div class="mb-3">
-                        {{ render_inline_radio(form.diameter_units) }}
-                        {{ render_inline_radio(form.thickness_units) }}
+                        <div>
+                            {{ render_inline_radio(form.diameter_units) }}
+                        </div>
+                        <div>
+                            {{ render_inline_radio(form.thickness_units) }}
+                        </div>
                     </div>
-                    {{ render_form_item_cols(form.line_pipes, col_md=[2]*6) }}
-                    {{ render_accord_form_item(form.year_constructed, item_name="Year Constructed") }}
+                    {{ render_form_item_cols(form.line_pipes, col_md=[2, 2, 1, 2, 1, 2, 2]) }}
+                    
                 </div>
             </div>
         </div>
@@ -45,10 +49,10 @@
                     {{ render_accord_form_item(form.design_press, form.design_press_units) }}
                     {{ render_accord_form_item(form.design_temp, form.design_temp_units) }}
                     <div class="form-row">
-                        <div class="col-md-6">
+                        <div class="col-md-2">
                             {{ render_accord_form_item(form.design_life, add_rem_btn=False, col_md=12) }}
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-2">
                             {{ render_accord_form_item(form.year_commissioned, item_name="Year Commissioned", add_rem_btn=False, col_md=12) }}
                         </div>
                     </div>
@@ -92,8 +96,12 @@
     </div>
 
     <div class="form-group d-flex mt-4">
-        <button id="reset-btn" class="btn btn-warning mr-auto" type="reset">Reset</button>
-        {{ form.go_cancel(typ="button", class=" btn btn-secondary mr-2") }}
+        <button id="reset-btn" class="btn btn-warning mr-auto" type="reset" onclick="resetForm()">Reset</button>
+        {% if no_lines == 1 %}
+            <a role="button" class="btn btn-secondary mr-2" href="{{ url_for('add_project') }}">Back</a>
+        {% else %}
+            <a role="button" class="btn btn-secondary mr-2" href="{{ url_for('pipelines') }}">Cancel</a>
+        {% endif %}
         {{ form.go_done(typ="button", class=" btn btn-primary") }}
     </div>
 </form>
@@ -117,6 +125,11 @@ addEventToFieldBtn('design_temp');
 addEventToFieldBtn('oper_press');
 addEventToFieldBtn('oper_temp');
 addEventToFieldBtn('test_press');
+
+function resetForm() {
+    document.getElementById('project-form').reset();
+    console.log('reset');
+}
 
 </script>
 {% endblock %}
