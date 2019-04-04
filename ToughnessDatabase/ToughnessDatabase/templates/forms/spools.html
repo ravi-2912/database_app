@@ -4,18 +4,33 @@
 
 <form action="/add/spools" method="POST">
     {% for pipeline in pipelines.keys() %}
-
-        <h4><label>{{ pipeline }}</label></h4>
-        {% for spool in pipelines[pipeline]["spools"] %}
-            <a class="btn btn-secondary" href="{{ url_for('add_test_data', line_name=pipeline, spool=spool) }}">
-                {{ spool }}
-            </a>
-
-        {% endfor %}
-
+    <h4><label>{{ pipeline }}</label></h4>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Line Name</th>
+                <th scope="col">Spool</th>
+                <th scope="col">Action</th>
+                <!--TODO: Add status-->
+            </tr>
+        </thead>
+        <tbody>
+            {% for spool in pipelines[pipeline]["spools"] %}
+            <tr>
+                <th scope="row">1</th>
+                <td>{{ pipeline }}</td>
+                <td>{{ spool }}</td>
+                <td>
+                    <a class="btn btn-secondary btn-sm" href="{{ url_for('add_test_data', line_name=pipeline, spool=spool) }}">
+                        Add Test Info
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
     {% endfor %}
-
-
 
 
     <div class="form-group d-flex mt-4">
