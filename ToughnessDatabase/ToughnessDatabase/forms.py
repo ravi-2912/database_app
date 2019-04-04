@@ -40,10 +40,11 @@ class LinePipeForm(FlaskForm):
 
     diameter = StringField("Diameter", validators=[DataRequired()])
     thickness = StringField("Thickness", validators=[DataRequired()])
-    grade = SelectField("Grade", choices=[("",""), ("Gr.B", "B"), ("X42", "X42"), ("X52", "X52")], validators=[DataRequired()])
-    seam_weld_type = SelectField("Weld Type", choices=[("",""), ("DSAW", "DSAW"), ("EFW", "EFW"), ("ERW", "ERW"), ("SMLS", "SMLS")], validators=[DataRequired()])
-    psl_no = SelectField("PSL No.", choices=[("",""), ("PSL1", "PSL 1"), ("PSL2", "PSL 2")], validators=[DataRequired()])
+    grade = SelectField("Grade", choices=[("B", "Gr.B"), ("X42", "X42"), ("X52", "X52")], validators=[DataRequired()])
+    seam_weld_type = SelectField("Weld Type", choices=[("DSAW", "DSAW"), ("EFW", "EFW"), ("ERW", "ERW"), ("SMLS", "SMLS")], validators=[DataRequired()])
+    psl_no = SelectField("PSL No.", choices=[("PSL1", "1"), ("PSL2", "2")], validators=[DataRequired()])
     manufacturer = StringField("Manufacturer", validators=[Optional()])
+    year_constructed = StringField("Construction Year", validators=[Optional()])
         
 class PipelineForm(FlaskForm):
     title = "Pipeline Information"
@@ -57,7 +58,7 @@ class PipelineForm(FlaskForm):
     length_units = RadioField("Length Units", choices=[("m", "m"), ("ft", "ft")], validators=[Optional()])
     
     
-    year_constructed = FieldList(DecimalField("Construction Year"), validators=[Optional()], min_entries=1)
+    
     
     design_code = FieldList(StringField("Design Code"), min_entries=1)
     design_press = FieldList(DecimalField("Design Pressure"), validators=[Optional()], min_entries=1, label="Design Pressure")
