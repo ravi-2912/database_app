@@ -10,23 +10,6 @@
 <form action="/add/pipeline/{{line_name}}" method="POST">
     {{form.csrf_token}}
     <div class="accordion" id="accordion-pipeline-info">
-        <div class="card">
-            <div class="card-header" id="dimensions">
-                <h2 class="mb-0">
-                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse-dimensions">
-                        Tensile
-                    </button>
-                </h2>
-            </div>
-
-            <div id="collapse-dimensions" class="collapse show" data-parent="#accordion-pipeline-info">
-                <div class="card-body">
-                    {{ render_accord_form_item(form.tensile_tests.test_code) }}
-                    {{ render_form_item_cols(form.tensile_tests.tensile_data, col_md=[2,2,2,2,3]) }}
-                </div>
-            </div>
-        </div>
-
 
         <div class="card">
             <div class="card-header" id="construction">
@@ -36,7 +19,7 @@
                     </button>
                 </h2>
             </div>
-            <div id="collapse-construction" class="collapse" data-parent="#accordion-pipeline-info">
+            <div id="collapse-construction" class="collapse show" data-parent="#accordion-pipeline-info">
                 <div class="card-body">
                     
                     {{ render_accord_form_item(form.charpy_test_data.test_code) }}
@@ -45,13 +28,28 @@
                         {{ render_inline_radio(form.charpy_test_data.temp_units) }}
                     </div>
 
-                        {{ render_form_item_cols(form.charpy_test_data.charpy_tests, col_md=[2]*5) }}
+                    {{ render_form_item_cols(form.charpy_test_data.charpy_tests, col_md=[2]*5) }}
 
-                    
                 </div>
             </div>
         </div>
 
+        <div class="card">
+            <div class="card-header" id="dimensions">
+                <h2 class="mb-0">
+                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse-dimensions">
+                        Tensile
+                    </button>
+                </h2>
+            </div>
+
+            <div id="collapse-dimensions" class="collapse" data-parent="#accordion-pipeline-info">
+                <div class="card-body">
+                    {{ render_accord_form_item(form.tensile_tests.test_code) }}
+                    {{ render_form_item_cols(form.tensile_tests.tensile_data, col_md=[2,2,2,2,3]) }}
+                </div>
+            </div>
+        </div>
 
         <div class="card">
             <div class="card-header" id="design">
