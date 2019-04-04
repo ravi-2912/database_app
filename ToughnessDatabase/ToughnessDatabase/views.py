@@ -85,7 +85,6 @@ def add_project():
             "pipelines": [data for data in form.pipelines.data]            
         }
 
-        print(session["project"]["pipelines"])
         if len(session["project"]["pipelines"]) == 1:
             return redirect(url_for("add_pipeline_info", line_name=session["project"]["pipelines"][0]["short_name"]))
         else:
@@ -121,7 +120,6 @@ def pipelines():
 def add_pipeline_info(line_name):
     """Renders the add test database page layout."""
 
-    """
     try:
         prj = session["pipelines"][line_name]
         form = forms.PipelineForm(request.form, data=prj)
@@ -129,8 +127,10 @@ def add_pipeline_info(line_name):
         form = forms.PipelineForm(request.form)
     
     form.title += " - {}".format(line_name)
-    """
-    form = forms.PipelineForm(request.form)
+
+    if len(session["project"]["pipelines"]) == 1:
+        form.go_done.label.text = "Next"
+        form.go_cancel.label.text = "Back"
     
     if request.method == "POST" and form.validate_on_submit():
         session["pipelines"] = {
@@ -139,12 +139,9 @@ def add_pipeline_info(line_name):
                 "line_pipes": [lp for lp in form.line_pipes.data],
                 
                 "diameter_units": form.diameter_units.data,
-                
                 "thickness_units": form.thickness_units.data,
                 "length": str(form.length.data),
                 "length_units": form.length_units.data,
-                
-                "year_constructed": [str(yc) for yc in form.year_constructed.data],
                 
                 "design_code": [dc for dc in form.design_code.data],
                 "design_press": [str(dp) for dp in form.design_press.data],
@@ -177,25 +174,19 @@ def add_pipeline_info(line_name):
                     g=lp["grade"],
                     m=lp["manufacturer"],
                 ))
-
-        #spools = ["{} {} {} {} {} {} {} {}".format(d,du,t,tu,g,w,m,"" if y==None else y) for d,t,g,w,m,y in itertools.product(D,T,G,W,M,Y)]
-        #session["pipelines"][line_name]["spools"] = spools
-        
-        if (form.go_cancel.data):
-            session["pipelines"][line_name] = {}
-            if len(session["project"]["pipelines"]) == 1:
-                return redirect(url_for("add_project"))
-            else:
-                return (redirect(url_for("pipelines")))
         
         if (form.go_done.data):
             if len(session["pipelines"]) == 1:
                 if len(session["pipelines"][line_name]["spools"]) == 1:
                     return redirect(url_for("add_test_data", line_name=line_name, spool=session["pipelines"][line_name]["spools"]))
                 else:
-                    return redirect(url_for("spools")) #spools
+                    return redirect(url_for("spools"))
             else:
                 return (redirect(url_for("pipelines")))
+    
+        if (form.go_cancel.data):
+            session["pipelines"][line_name] = {}
+            
 
     return render_template(
         "forms/pipelineinfo.html",
@@ -203,6 +194,7 @@ def add_pipeline_info(line_name):
         year = datetime.now().year,
         username = environ["USERNAME"],
         line_name=line_name,
+        no_lines=len(session["project"]["pipelines"]),
         form = form
         )
 
