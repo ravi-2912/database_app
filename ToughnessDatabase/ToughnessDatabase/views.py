@@ -3,20 +3,28 @@ Routes and views for the flask application.
 """
 
 from datetime import datetime
-from flask import render_template, session, \
+from flask import render_template, session as liogin_session, \
                   request, jsonify, url_for, \
-                  redirect
-from ToughnessDatabase import app, forms
+                  redirect, g
+from ToughnessDatabase import app, forms, session_db
 from os import environ
 from functools import wraps
 import itertools
+from pprint import pprint
+from flask_wtf import FlaskForm
+from wtforms import SubmitField
 
-global str
+session = session_db.db
+project = session["project"]
+pipelines = session["pipelines"]
+test_data = session["test_data"]
+
 
 @app.route("/")
 @app.route("/home")
 def home():
     """Renders the home page."""
+    
     return render_template(
         "index.html",
         title="Home Page",
@@ -64,31 +72,44 @@ def add():
 @app.route("/add/project", methods=["GET", "POST"])
 def add_project():
     """Renders the add test database page layout."""
-
-    try:
-        prj = session["project"]
-        form = forms.ProjectForm(request.form, data=prj)
-    except:
-        form = forms.ProjectForm(request.form)
     
-    print(form.go_next.data)
-    if request.method == "POST" and form.validate_on_submit():
-        session["project"] = {
-            "name": form.name.data,
-            "prj_no": form.prj_no.data,
-            "region_prj_no": form.region_prj_no.data,
-            "client": form.client.data,
-            "prj_type": form.prj_type.data,
-            "country": form.country.data,
-            "state": form.state.data,
-            "city": form.city.data,
-            "pipelines": [data for data in form.pipelines.data]            
-        }
+    testdata = {
+        "name": "TEST PROJECT",
+        "prj_no": "12345-56789-0123",
+        "region_prj_no": "12345-98",
+        "client": "",
+        "prj_type": "",
+        "country": "",
+        "state": "",
+        "city": "",
+        "pipelines":[
+            {
+                "short_name": "P01",
+                "name": ""
+            },{
+                "short_name": "P02",
+                "name": ""
+            },{
+                "short_name": "P03",
+                "name": ""
+            }
+        ]
+    }
 
-        if len(session["project"]["pipelines"]) == 1:
-            return redirect(url_for("add_pipeline_info", line_name=session["project"]["pipelines"][0]["short_name"]))
+    
+    try:
+        form = forms.ProjectForm(data=testdata)
+    except:
+        form = forms.ProjectForm()
+    
+    if request.method == "POST" and form.validate_on_submit():
+        project.delete_many({})
+        project.insert_one(form.data)
+        prj = project.find_one()        
+        if len(prj["pipelines"]) == 1:
+            return redirect(url_for("add_pipeline_info", line_name=prj["pipelines"][0]["short_name"]))
         else:
-            return redirect(url_for("pipelines"))
+            return redirect(url_for("show_pipelines"))
 
     return render_template(
         "forms/project.html",
@@ -98,19 +119,31 @@ def add_project():
         form = form
         )
 
-@app.route("/pipelines")
-def pipelines():
+@app.route("/pipelines", methods=["GET", "POST"])
+def show_pipelines():
     """Renders the available pipelines."""
 
-    form = {"title": "Pipelines"}
-       
+    class PipelinesTableForm(FlaskForm):
+        title = "Pipelines"
+        go_next = SubmitField("Next")
+    
+    form = PipelinesTableForm()
 
+    if request.method == "POST":
+        prj_pipelines = [x for x in project.find_one()["pipelines"]]
+        session_pipelines = [x for x in pipelines.find({}, {"_id": 0, "short_name": 1, "spools": 1})]
+        
+        if len(prj_pipelines) == len(session_pipelines):
+            return redirect(url_for('spools'))
+        
+    
+    
     return render_template(
         "forms/pipeline.html",
         title = "Add Pipeline Information",
         year = datetime.now().year,
         username = environ["USERNAME"],
-        pipelines = session["project"]["pipelines"],
+        pipelines = project.find_one()["pipelines"],
         form = form
         )
 
@@ -121,71 +154,56 @@ def add_pipeline_info(line_name):
     """Renders the add test database page layout."""
 
     try:
-        prj = session["pipelines"][line_name]
-        form = forms.PipelineForm(request.form, data=prj)
+        data = pipelines.find_one({"short_name": line_name})
+        form = forms.PipelineForm(data=data)
     except:
-        form = forms.PipelineForm(request.form)
+        form = forms.PipelineForm()
     
     form.title += " - {}".format(line_name)
-
-    if len(session["project"]["pipelines"]) == 1:
-        form.go_done.label.text = "Next"
-        form.go_cancel.label.text = "Back"
     
+    
+
     if request.method == "POST" and form.validate_on_submit():
-        session["pipelines"] = {
-            line_name: {
-                "short_name": line_name,
-                "line_pipes": [lp for lp in form.line_pipes.data],
-                
-                "diameter_units": form.diameter_units.data,
-                "thickness_units": form.thickness_units.data,
-                "length": str(form.length.data),
-                "length_units": form.length_units.data,
-                
-                "design_code": [dc for dc in form.design_code.data],
-                "design_press": [str(dp) for dp in form.design_press.data],
-                "design_press_units": form.design_press_units.data,
-                "design_temp": [str(dt) for dt in form.design_temp.data],
-                "design_temp_units": form.design_temp_units.data,
-                "design_life": str(form.design_life.data),
-                "year_commissioned": str(form.year_commissioned.data),
-
-                "oper_press": [str(op) for op in form.oper_press.data],
-                "oper_press_units": form.oper_press_units.data,
-                "oper_temp": [str(ot) for ot in form.oper_temp.data],
-                "oper_temp_units": form.oper_temp_units.data,
-
-                "test_press": [str(tp) for tp in form.test_press.data],
-                "test_press_units": form.test_press_units.data,
-                "test_year": str(form.test_year.data)
-            }
-        }
-
-        session["pipelines"][line_name]["spools"] = []
-        for lp in session["pipelines"][line_name]["line_pipes"]:
-            session["pipelines"][line_name]["spools"].append(
+        pipelines.delete_many({"short_name": line_name})
+        pipeline = form.data
+        spools = []
+        
+        for lp in pipeline["line_pipes"]:
+            spools.append(
                 "{d} {du} {t} {tu} {w} {g} {m}".format(
-                    d=str(lp["diameter"]),
-                    du=session["pipelines"][line_name]["diameter_units"],
-                    t=str(lp["thickness"]),
-                    tu=session["pipelines"][line_name]["thickness_units"],
-                    w=lp["seam_weld_type"],
-                    g=lp["grade"],
-                    m=lp["manufacturer"],
+                    d = lp["diameter"],
+                    du = pipeline["diameter_units"],
+                    t = lp["thickness"],
+                    tu = pipeline["thickness_units"],
+                    w = lp["seam_weld_type"],
+                    g = lp["grade"],
+                    m = lp["manufacturer"],
                 ))
         
-        if (form.go_done.data):
-            if len(session["pipelines"]) == 1:
-                if len(session["pipelines"][line_name]["spools"]) == 1:
-                    return redirect(url_for("add_test_data", line_name=line_name, spool=session["pipelines"][line_name]["spools"]))
-                else:
-                    return redirect(url_for("spools"))
-            else:
-                return (redirect(url_for("pipelines")))
-    
-        if (form.go_cancel.data):
-            session["pipelines"][line_name] = {}
+        pipeline["spools"] = spools
+        pipeline["short_name"] = line_name
+        
+        pipelines.insert_one(pipeline)
+        
+        if (form.go_next.data):
+            # refactor all conditions below
+            prj_pipelines = [x for x in project.find_one()["pipelines"]]
+            session_pipelines = [x for x in pipelines.find({}, {"_id": 0, "short_name": 1})]
+            if len(prj_pipelines) == 1 and len(spools) == 1:
+                return redirect(url_for("add_test_data", line_name=line_name, spool=spools))
+            
+            if len(prj_pipelines) == 1 and len(spools) > 1:
+                return redirect(url_for("spools"))
+            
+            if len(prj_pipelines) > 1:
+                line_names_available = [x["short_name"] for x in prj_pipelines]
+                line_names_with_data = [x["short_name"] for x in session_pipelines]
+                unfilled_line_names = list(set(line_names_available) ^ set(line_names_with_data))
+                if len(unfilled_line_names) > 0:
+                    return redirect(url_for("add_pipeline_info", line_name=unfilled_line_names[0]))
+                else: 
+                    return redirect(url_for("spools"))          
+            
             
 
     return render_template(
@@ -194,7 +212,7 @@ def add_pipeline_info(line_name):
         year = datetime.now().year,
         username = environ["USERNAME"],
         line_name=line_name,
-        no_lines=len(session["project"]["pipelines"]),
+        no_lines=len(project.find_one()["pipelines"]),
         form = form
         )
 
@@ -203,13 +221,13 @@ def add_pipeline_info(line_name):
 def spools():
 
     form = {"title": "Pipeline Spools"}
-       
+    pprint([x for x in pipelines.find({},{"short_name": 1, "spools": 1})])
     return render_template(
         "forms/spools.html",
         title = "Add Spool Test Data",
         year = datetime.now().year,
         username = environ["USERNAME"],
-        pipelines = session["pipelines"],
+        pipelines = [x for x in pipelines.find({},{"short_name": 1, "spools": 1, "name": 1})["spools"]],
         form = form
         )
 
@@ -219,20 +237,26 @@ def spools():
 def add_test_data(line_name, spool):
     """Renders the add test database page layout."""
 
-    """
     try:
-        prj = session["tensile_tests"][line_name]
-        form = forms.TensileTestForm(request.form, data=prj)
+        form = forms.TestDataForm(data=session["test-data"][line_name][spool])
     except:
-        form = forms.TensileTestForm(request.form)
-    """
+        form = forms.TestDataForm()
     
-    form = forms.TestDataForm(request.form)
+    
+    form.title += " - {} - {}".format(line_name, spool)
 
     if request.method == "POST" and form.validate_on_submit():
-        print("POST")
+        test_data.delete_many({"short_name": line_name, "spool": spool})
+        test = form.data
+        test["short_name"] = line_name
+        test["spool"] = spool
+        test_data.insert_one(test)
+
+        if form.go_next.data:
+            redirect(url_for("spools"))
         
-        
+    pprint(pipelines.find({"short_name": line_name}, {"spools":1}))
+    
     return render_template(
         "forms/testdata.html",
         title = "Add Test Data",
@@ -240,5 +264,12 @@ def add_test_data(line_name, spool):
         username = environ["USERNAME"],
         line_name = line_name,
         spool = spool,
+        no_lines = len(project.find_one()["pipelines"]),
+        no_spools = len([x for x in pipelines.find({"short_name": line_name}, {"spools":1, "_id":0})]),
         form = form
         )
+
+
+@app.route("/review", methods=["GET", "POST"])
+def review_submit():
+    return "done"

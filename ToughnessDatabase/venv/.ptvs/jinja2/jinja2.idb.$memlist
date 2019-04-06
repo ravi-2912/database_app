@@ -35,7 +35,7 @@ os
 nodes
 UndefinedError
 keyword
-urllib
+types
 TemplateSyntaxError
 loaders
 hashlib
@@ -85,7 +85,7 @@ pprint
 StrictUndefined
 evalcontextfilter
 tests
-types
+urllib
 bccache
 asyncfilters
 PackageLoader

@@ -31,7 +31,6 @@ split
 __file__
 _tg_screen_functions
 __forwardmethods
-mainloop
 _make_global_funcs
 __stringBody
 __builtins__

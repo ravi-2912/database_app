@@ -1,6 +1,6 @@
 sys
 native_encoding
-EXPAT_VERSION
+XML_PARAM_ENTITY_PARSING_ALWAYS
 XML_PARAM_ENTITY_PARSING_NEVER
 expat_CAPI
 features
@@ -8,14 +8,14 @@ XMLParserType
 ParserCreate
 __builtins__
 __file__
-model
 XML_PARAM_ENTITY_PARSING_UNLESS_STANDALONE
-__cached__
-XML_PARAM_ENTITY_PARSING_ALWAYS
+version_info
+model
+EXPAT_VERSION
 ExpatError
 ErrorString
 errors
 __name__
-version_info
 __package__
+__cached__
 __spec__

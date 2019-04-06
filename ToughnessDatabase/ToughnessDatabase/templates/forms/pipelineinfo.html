@@ -100,9 +100,9 @@
         {% if no_lines == 1 %}
             <a role="button" class="btn btn-secondary mr-2" href="{{ url_for('add_project') }}">Back</a>
         {% else %}
-            <a role="button" class="btn btn-secondary mr-2" href="{{ url_for('pipelines') }}">Cancel</a>
+            <a role="button" class="btn btn-secondary mr-2" href="{{ url_for('show_pipelines') }}">Cancel</a>
         {% endif %}
-        {{ form.go_done(typ="button", class=" btn btn-primary") }}
+        {{ form.go_next(typ="button", class=" btn btn-primary") }}
     </div>
 </form>
 

@@ -1,9 +1,9 @@
-get_tracemalloc_memory
+__spec__
 _format_size
 get_traceback_limit
 Traceback
 _normalize_filename
-__spec__
+linecache
 __package__
 get_object_traceback
 DomainFilter
@@ -12,14 +12,14 @@ stop
 _get_object_traceback
 pickle
 Frame
-get_traced_memory
+__file__
 start
 Filter
 _Traces
 __builtins__
 Snapshot
 fnmatch
-linecache
+get_tracemalloc_memory
 total_ordering
 _get_traces
 __name__
@@ -34,4 +34,4 @@ StatisticDiff
 _compare_grouped_stats
 clear_traces
 Iterable
-__file__
+get_traced_memory

@@ -34,7 +34,6 @@ winkerberos
 ssl_match_hostname
 version
 set
-wincertstore
 ExecutionTimeout
 results
 collections

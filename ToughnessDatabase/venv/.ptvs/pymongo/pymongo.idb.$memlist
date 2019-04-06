@@ -12,7 +12,7 @@ SLOW_ONLY
 ssl_support
 InsertOne
 settings
-time
+base64
 errors
 itertools
 ASCENDING
@@ -62,7 +62,7 @@ mongo_client
 ismaster
 bulk
 helpers
-base64
+time
 GEOHAYSTACK
 collection
 GEO2D

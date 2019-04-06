@@ -5,7 +5,7 @@ This script runs the ToughnessDatabase application using a development server.
 from os import environ, urandom
 from ToughnessDatabase import app
 
-SECRET_KEY = urandom(32)
+SECRET_KEY = urandom(25)
 
 if __name__ == '__main__':
     HOST = environ.get('SERVER_HOST', 'localhost')

@@ -9,7 +9,7 @@ datetime
 __builtins__
 wrapper
 __file__
-urllib
+email
 __cached__
 __package__
 CacheControlAdapter
@@ -23,10 +23,10 @@ serialize
 urlparse
 CacheController
 __name__
-threading
-cPickle
-email
 pip
+cPickle
+threading
+urllib
 cache
 CacheControl
 __spec__

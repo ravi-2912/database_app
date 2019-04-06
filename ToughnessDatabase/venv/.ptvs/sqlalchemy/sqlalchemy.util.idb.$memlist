@@ -17,7 +17,7 @@ get_cls_kwargs
 Properties
 queue
 defaultdict
-time
+itertools
 dottedgetter
 inject_docstring_text
 langhelpers
@@ -38,9 +38,9 @@ safe_kwarg
 u
 bool_or_str
 __package__
-collections
-dictlike_iteritems
 cPickle
+dictlike_iteritems
+io
 nested
 portable_instancemethod
 only_once
@@ -98,7 +98,7 @@ decorator
 as_interface
 warn_pending_deprecation
 format_argspec_init
-itertools
+time
 warn_exception
 StringIO
 pickle
@@ -119,7 +119,7 @@ __cached__
 __future__
 cStringIO
 namedtuple
-io
+collections
 set_creation_order
 byte_buffer
 methods_equivalent

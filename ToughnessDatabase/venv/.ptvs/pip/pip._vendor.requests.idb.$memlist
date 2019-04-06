@@ -28,9 +28,9 @@ collections
 io
 PreparedRequest
 Request
-urlparse
-Session
 dummy_threading
+Session
+urlparse
 urllib
 exceptions
 __file__

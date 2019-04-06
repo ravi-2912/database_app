@@ -1,8 +1,8 @@
 time
 hashlib
 html
-warnings
 collections
+io
 all_by_module
 utils
 formparser
@@ -15,13 +15,13 @@ __name__
 http
 email
 routing
-OpenSSL
+watchdog
 _thread
 posixemulation
 exceptions
 _reloader
 BaseHTTPServer
-watchdog
+OpenSSL
 serving
 datastructures
 urls
@@ -41,8 +41,8 @@ item
 itertools
 object_origins
 __builtins__
-io
 threading
+warnings
 __spec__
 cStringIO
 datetime
