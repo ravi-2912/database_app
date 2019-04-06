@@ -13,12 +13,13 @@ import itertools
 from pprint import pprint
 from flask_wtf import FlaskForm
 from wtforms import SubmitField
+from bson.json_util import loads, dumps
 
 session = session_db.db
 project = session["project"]
 pipelines = session["pipelines"]
 test_data = session["test_data"]
-
+exclude = {"_id": 0, "csrf_token": 0, "go_next": 0}
 
 @app.route("/")
 @app.route("/home")
