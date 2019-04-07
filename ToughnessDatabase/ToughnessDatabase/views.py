@@ -6,7 +6,7 @@ from datetime import datetime
 from flask import render_template, session as liogin_session, \
                   request, jsonify, url_for, \
                   redirect, g
-from ToughnessDatabase import app, forms, session_db
+from ToughnessDatabase import app, forms, session_db, toughness_db
 from os import environ
 from functools import wraps
 import itertools
@@ -15,6 +15,7 @@ from flask_wtf import FlaskForm
 from wtforms import SubmitField
 from bson.json_util import loads, dumps
 
+Toughnes_DB = toughness_db.db
 session = session_db.db
 project = session["project"]
 pipelines = session["pipelines"]
@@ -343,6 +344,7 @@ def review_submit():
         start_again = SubmitField("Start Again")
         submit_to_db = SubmitField("Submit to DB")
 
+    submitted = False
     form = ReviewSubmitForm()
     
     if request.method == "POST" and form.validate_on_submit():
@@ -350,7 +352,14 @@ def review_submit():
             return redirect(url_for('add'))
         
         if form.submit_to_db.data:
-            return "SUBMITED"
+            tdb = Toughnes_DB["ToughDB"]
+            obj = {
+                "project": session["project"].find_one({},{"csrf_token": 0, "go_next": 0}),
+                "pipelines": [x for x in session["pipelines"].find({}, {"csrf_token": 0, "go_next": 0})],
+                "test_data": [x for x in session["test_data"].find({}, {"csrf_token": 0, "go_next": 0})]
+            }
+            tdb.insert_one(obj)
+            submitted = True
 
     return render_template(
         "forms/review.html",
@@ -360,7 +369,8 @@ def review_submit():
         project = dumps(project.find_one({}, exclude)),
         pipelines = dumps(pipelines.find({}, exclude)),
         test_data = dumps(test_data.find({}, exclude)),
-        form = form
+        form = form,
+        submitted = submitted
     )
 
 
