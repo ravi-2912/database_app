@@ -11,5 +11,6 @@ csrf = CSRFProtect()
 app = Flask(__name__)
 csrf.init_app(app)
 session_db = PyMongo(app, uri="mongodb://localhost:27017/session")
+toughness_db = PyMongo(app, uri="mongodb://localhost:27017/toughness")
 
 import ToughnessDatabase.views
