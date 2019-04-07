@@ -60,7 +60,14 @@ def about():
 @app.route("/add", methods=["GET", "POST", "PUT", "DELETE"])
 def add():
     """Renders the add test database page layout."""
-    form = {"title": "Add Test Data"}
+    try:
+        project.delete_many({})
+        pipelines.delete_many({})
+        test_data.delete_many({})
+    except: 
+        pass
+
+    form = {"title": "Add Test Data to Toughness Database"}
     return render_template(
         "add.html",
         title = "Add Test Data",
@@ -130,14 +137,22 @@ def show_pipelines():
     
     form = PipelinesTableForm()
 
-    if request.method == "POST":
+    if request.method == "POST" and form.validate_on_submit():
         prj_pipelines = [x for x in project.find_one()["pipelines"]]
         session_pipelines = [x for x in pipelines.find({}, {"_id": 0, "short_name": 1, "spools": 1})]
         
         if len(prj_pipelines) == len(session_pipelines):
-            return redirect(url_for('spools'))
-        
+            return redirect(url_for("spools"))
+        else:
+            line_names_available = [x["short_name"] for x in prj_pipelines]
+            line_names_with_data = [x["short_name"] for x in session_pipelines]
+            unfilled_line_names = list(set(line_names_available) ^ set(line_names_with_data))
+            if len(unfilled_line_names) > 0:
+                return redirect(url_for("add_pipeline_info", line_name=unfilled_line_names[0]))
+            else: 
+                return redirect(url_for("spools"))
     
+        
     
     return render_template(
         "forms/pipeline.html",
@@ -171,7 +186,7 @@ def add_pipeline_info(line_name):
         
         for lp in pipeline["line_pipes"]:
             spools.append(
-                "{d} {du} {t} {tu} {w} {g} {m}".format(
+                "{d}_{du}_{t}_{tu}_{w}_{g}_{m}".format(
                     d = lp["diameter"],
                     du = pipeline["diameter_units"],
                     t = lp["thickness"],
@@ -180,7 +195,7 @@ def add_pipeline_info(line_name):
                     g = lp["grade"],
                     m = lp["manufacturer"],
                 ))
-        
+        pprint(spools)
         pipeline["spools"] = spools
         pipeline["short_name"] = line_name
         
@@ -189,9 +204,9 @@ def add_pipeline_info(line_name):
         if (form.go_next.data):
             # refactor all conditions below
             prj_pipelines = [x for x in project.find_one()["pipelines"]]
-            session_pipelines = [x for x in pipelines.find({}, {"_id": 0, "short_name": 1})]
+            session_pipelines = [x for x in pipelines.find({}, exclude)]
             if len(prj_pipelines) == 1 and len(spools) == 1:
-                return redirect(url_for("add_test_data", line_name=line_name, spool=spools))
+                return redirect(url_for("add_test_data", line_name=line_name, spool=spools[0]))
             
             if len(prj_pipelines) == 1 and len(spools) > 1:
                 return redirect(url_for("spools"))
@@ -220,15 +235,43 @@ def add_pipeline_info(line_name):
 
 @app.route("/spools", methods=["GET", "POST"])
 def spools():
+    class SpoolsListForm(FlaskForm):
+        title = "Pipeline Spools"
+        go_next = SubmitField("Next")
 
-    form = {"title": "Pipeline Spools"}
-    pprint([x for x in pipelines.find({},{"short_name": 1, "spools": 1})])
+    form = SpoolsListForm()
+    
+    existing_test = [x["short_name"]+"_"+x["spool"] for x in test_data.find({}, {"_id": 0, "short_name": 1, "spool": 1})]
+    available_spools = [x for x in pipelines.find({}, {"_id": 0, "short_name": 1, "spools": 1})]
+    x = []
+    for p in available_spools:
+        for s in p["spools"]:
+            x.append(p["short_name"]+"_"+s)
+    available_spools = x
+    
+    if len(existing_test) == len(available_spools):
+        form.go_next.label.text = "Review and Submit"
+    
+    if request.method == "POST" and form.validate_on_submit():
+        existing_test = [x["short_name"]+"_"+x["spool"] for x in test_data.find({}, {"_id": 0, "short_name": 1, "spool": 1})]
+        remaining_test = list(set(available_spools) ^ set(existing_test))
+        if len(existing_test) == len(available_spools):
+            return redirect(url_for("review_submit"))
+        
+        if len(remaining_test) > 0:
+            spool = remaining_test[0]
+            line_name, spool = spool.split("_", 1)
+            return redirect(url_for("add_test_data", line_name=line_name, spool=spool))
+            
+        return dumps(available_spools)
+    
+
     return render_template(
         "forms/spools.html",
         title = "Add Spool Test Data",
         year = datetime.now().year,
         username = environ["USERNAME"],
-        pipelines = [x for x in pipelines.find({},{"short_name": 1, "spools": 1, "name": 1})["spools"]],
+        pipelines = [x for x in pipelines.find({},{"short_name": 1, "spools": 1, "name": 1, "_id":0})],
         form = form
         )
 
@@ -239,12 +282,20 @@ def add_test_data(line_name, spool):
     """Renders the add test database page layout."""
 
     try:
-        form = forms.TestDataForm(data=session["test-data"][line_name][spool])
+        data = test_data.find_one({"short_name": line_name, "spool": spool})
+        form = forms.TestDataForm(data=data)
+        pprint(data)
     except:
         form = forms.TestDataForm()
+        print("No")
     
     
-    form.title += " - {} - {}".format(line_name, spool)
+    form.title += " - {} - {}".format(line_name, spool.replace("_"," "))
+    existing_test = [x["short_name"]+"_"+x["spool"] for x in test_data.find({}, {"_id": 0, "short_name": 1, "spool": 1})]
+    available_spools = [x for x in pipelines.find({}, {"_id": 0, "short_name": 1, "spools": 1})]
+
+    if len(existing_test) == len(available_spools):
+        form.go_next.label.text = "Review and Submit"
 
     if request.method == "POST" and form.validate_on_submit():
         test_data.delete_many({"short_name": line_name, "spool": spool})
@@ -253,11 +304,24 @@ def add_test_data(line_name, spool):
         test["spool"] = spool
         test_data.insert_one(test)
 
+
         if form.go_next.data:
-            redirect(url_for("spools"))
-        
-    pprint(pipelines.find({"short_name": line_name}, {"spools":1}))
-    
+            existing_test = [x["short_name"]+"_"+x["spool"] for x in test_data.find({}, {"_id": 0, "short_name": 1, "spool": 1})]
+            x = []
+            for p in available_spools:
+                for s in p["spools"]:
+                    x.append(p["short_name"]+"_"+s)
+            available_spools = x
+            remaining_test = list(set(available_spools) ^ set(existing_test))
+
+            if len(existing_test) == len(available_spools):
+                return redirect(url_for("review_submit"))
+            
+            if len(remaining_test) > 0:
+                spool = remaining_test[0]
+                line_name, spool = spool.split("_", 1)
+                return redirect(url_for("add_test_data", line_name=line_name, spool=spool)) 
+                
     return render_template(
         "forms/testdata.html",
         title = "Add Test Data",
@@ -266,11 +330,35 @@ def add_test_data(line_name, spool):
         line_name = line_name,
         spool = spool,
         no_lines = len(project.find_one()["pipelines"]),
-        no_spools = len([x for x in pipelines.find({"short_name": line_name}, {"spools":1, "_id":0})]),
+        no_spools = len(available_spools),
         form = form
         )
 
 
 @app.route("/review", methods=["GET", "POST"])
 def review_submit():
-    return "done"
+
+    class ReviewSubmitForm(FlaskForm):
+        title = "Review and Submit"
+        start_again = SubmitField("Start Again")
+        submit_to_db = SubmitField("Submit to DB")
+
+    form = ReviewSubmitForm()
+    
+    if request.method == "POST" and form.validate_on_submit():
+        if form.start_again.data:
+            return redirect(url_for('add'))
+        
+        if form.submit_to_db.data:
+            return "SUBMITED"
+
+    return render_template(
+        "forms/review.html",
+        title = form.title,
+        year = datetime.now().year,
+        username = environ["USERNAME"],
+        project = dumps(project.find_one({}, exclude)),
+        pipelines = dumps(pipelines.find({}, exclude)),
+        test_data = dumps(test_data.find({}, exclude)),
+        form = form
+    )

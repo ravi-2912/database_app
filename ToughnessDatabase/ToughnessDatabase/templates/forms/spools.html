@@ -2,7 +2,8 @@
 
 {% block formcontent %}
 
-<form action="/add/spools" method="POST">
+<form action="/spools" method="POST">
+    {{ form.csrf_token }}
     {% for pipeline in pipelines %}
     {% if pipeline["name"] %}
         <h5><label>{{ pipeline["name"] }}</label></h5>
@@ -24,9 +25,9 @@
             <tr>
                 <th scope="row">1</th>
                 <td>{{ pipeline["short_name"] }}</td>
-                <td>{{ spool }}</td>
+                <td>{{ spool.replace("_"," ") }}</td>
                 <td>
-                    <a class="btn btn-secondary btn-sm" href="{{ url_for('add_test_data', line_name=pipeline, spool=spool) }}">
+                    <a class="btn btn-secondary btn-sm" href="{{ url_for('add_test_data', line_name=pipeline['short_name'], spool=spool) }}">
                         Add Test Info
                     </a>
                 </td>
@@ -40,7 +41,7 @@
     <div class="form-group d-flex mt-4">
         
         <a role="button" class="btn btn-secondary ml-auto mr-2" href="/pipelines">Back</a>
-        <button type="submit" class="btn btn-primary">Next</button>
+        {{ form.go_next(class="btn btn-primary") }}
     </div>
 </form>
 

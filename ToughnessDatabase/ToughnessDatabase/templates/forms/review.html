@@ -1,0 +1,35 @@
+{% extends "add.html" %}
+
+{% block formcontent %}
+<form action="/review" method="POST" id="review-form">
+    <h4>Project</h4>
+    <div id="project-table"></div>
+    <h4 class="mt-4">Pipelines</h4>
+    <div id="pipelines-table"></div>
+    <h4 class="mt-4">Test Data</h4>
+    <div id="testdata-table"></div>
+    <div class="form-row mt-5">
+        <a class="btn btn-secondary btn-lg" href="{{ url_for('spools') }}">Back</a>
+        {{ form.start_again(class="btn btn-danger btn-lg ml-auto mr-4")}}
+        {{ form.submit_to_db(class="btn btn-success btn-lg") }}
+    </div>
+</form>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{{url_for('static', filename='scripts/prettyprint.js') }}"></script>
+<script type="text/javascript">
+let config = {
+		// Config
+		maxDepth: 5 // Max member depth (when displaying objects) (default: 3)
+	}
+    let prj_tbl = prettyPrint( JSON.parse({{project|tojson|safe}}), config );
+    let pipelines_tbl = prettyPrint( JSON.parse({{pipelines|tojson|safe}}), config );
+    let test_data_tbl = prettyPrint( JSON.parse({{test_data|tojson|safe}}), config );
+    $('#project-table').append(prj_tbl)
+    $('#pipelines-table').append(pipelines_tbl);
+    $('#testdata-table').append(test_data_tbl)
+</script>
+
+{% endblock %}

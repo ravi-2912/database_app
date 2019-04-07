@@ -21,17 +21,44 @@
         </div>
     </aside>-->
     <section class="col-md-12">
-        <div class="row mb-3">
-            <div class="col">
-                <h3>{{ form.title }}</h3>
+        {% block page_heading %}
+            <div class="row mb-3">
+                <div class="col">
+                    <h3>{{ form.title }}</h3>
+                </div>
             </div>
-        </div>
+        {% endblock %}
         <div class="row">
-            <div class="col">
+            <div class="col-12">
                 {% block formcontent %} 
+                    <p class="lead">
+                        Guidelines
+                    </p>
+                    <ul class="list-group w-50">
+                        <li class="list-group-item">
+                            Have details of Project and Pipelines under the Project
+                        </li>
+                        <li class="list-group-item">
+                            Collect the names of the Pipelines that have Test Data
+                        </li>
+                        <li class="list-group-item">
+                            Have details of the Line Pipe for which Test Data is available. A Line Pipe in this app is uniquely identified by the line name, diameter, wall thickness, weld type, grade, PSL, manufacturer and yer constructed.
+                        </li>
+                        <li class="list-group-item">
+                            Details of Charpy impact are must, having Fracture test is beneficial.
+                        </li>
+                        <li class="-list-group-item">
+                            Excel import are currently work in progress.
+                        </li>
+                        <li class="list-group-item">
+                            
+                        </li>
+                    </ul>
+                    
                     <div class="form-group d-flex mt-4">
                         <a class="btn btn-primary btn-lg" href="{{ url_for('add_project') }}" role="button">Start</a>
-                        <a class="btn btn-secondary btn-lg ml-5" href="{{ url_for('home') }}" role="button">Home</a>
+                        <a class="btn btn-secondary btn-lg mx-4 disabled" href="{{ url_for('add_project') }}" role="button" disabled>Import</a>
+                        <a class="btn btn-secondary btn-lg" href="{{ url_for('home') }}" role="button">Home</a>
                     </div>
                 {% endblock %}
             </div>

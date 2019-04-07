@@ -88,10 +88,11 @@ class TensileForm(FlaskForm):
   
 
 class TensileTestForm(FlaskForm):
-    title = "Tensile Test Data"
+    class Meta:
+        csrf = False
     
+    title = "Tensile Test Data"
     test_code = FieldList(StringField("Testing Standard"), min_entries=1)
-
     tensile_data = FieldList(FormField(TensileForm), min_entries=1)
     
     yield_units = RadioField("Pressure Units", choices=[("MPa", "MPa"), ("ksi", "ksi")], validators=[Optional()])
@@ -125,5 +126,4 @@ class TestDataForm(FlaskForm):
     title = "Add Test Data"
     tensile_tests = FormField(TensileTestForm)
     charpy_test_data = FormField(MultiCharpyTestsForm)
-
-    go_next = SubmitField("Review & Submit")
+    go_next = SubmitField("Next")

@@ -36,7 +36,7 @@
 
     <div class="form-group d-flex mt-5">
         <a role="button" class="btn btn-secondary mr-2 ml-auto" href="/add/project">Back</a>
-        <button type="submit" class="btn btn-primary">Next</button>
+        {{ form.go_next(class="btn btn-primary") }}
     </div>
 </form>
 
@@ -45,37 +45,6 @@
 {% block scripts %}
 
 <script type="text/javascript">
-    $('#expand-od-form').change(function (e) {
-        e.preventDefault();
-        $(this).parent().toggleClass('text-success text-danger');
-        $('.animate-plus').toggleClass('rotate-plus');
-        $('#od-form').toggleClass('d-none')
-        if (this.checked) {
 
-        } else {
-
-        }
-    });
-
-    $('#add-dia-text').click(function (e) {
-        e.preventDefault();
-        let prev_elem = $('#od-texts').children('div:nth-last-child(2)').children();
-        let prev_elem_id = prev_elem.attr('id');
-        let next_elem_id = prev_elem_id.split('-')[0] + '-' + (parseInt(prev_elem_id.split('-')[1]) + 1)
-            .toString();
-        html = `<div class="form-group col-md-2">
-                    <input class="form-control" id="${next_elem_id}" name="${next_elem_id}" type="text" value="">
-                </div>`;
-        prev_elem.parent().after(html);
-    });
-    $('#rem-dia-text').click(function (e) {
-        e.preventDefault();
-        let last_elem = $('#od-texts').children('div:nth-last-child(2)');
-        let elem_count = $('#od-texts').children().length - 1;
-        console.log(elem_count)
-        if (elem_count > 1) {
-            last_elem.remove();
-        }
-    });
 </script>
 {% endblock %}
