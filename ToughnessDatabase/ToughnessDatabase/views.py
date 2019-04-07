@@ -362,3 +362,15 @@ def review_submit():
         test_data = dumps(test_data.find({}, exclude)),
         form = form
     )
+
+
+@app.route("/view", methods=["GET", "POST"])
+def view_search():
+    form = {"title": "Search Records"}
+    return render_template(
+        "forms/search.html",
+        title = "Search Records",
+        year = datetime.now().year,
+        username = environ["USERNAME"],
+        form = form
+    )
